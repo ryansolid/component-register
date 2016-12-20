@@ -1,0 +1,17 @@
+{
+  "name": "component-register",
+  "description": "Basic Wrapper around Web Components",
+  "version": "0.1.0",
+  "author": "Ryan Carniato",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "coffee --compile --bare --no-header --output lib/ src/"
+  },
+  "dependencies": {
+    "document-register-element": "*",
+    "shady-css-parser": "*",
+    "skatejs-named-slots": "*"
+  }
+}
