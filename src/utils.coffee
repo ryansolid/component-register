@@ -25,8 +25,8 @@ module.exports = class ComponentUtils
   @cloneProps: (props) ->
     new_props = {}
     for k, prop of props
-      new_props[k] = ComponentUtils.shallowClone(prop)
-      new_props[k].value = ComponentUtils.shallowClone(prop.value) if ComponentUtils.isObject(prop.value) and not ComponentUtils.isFunction(prop.value)
+      new_props[k] = Object.assign({}, prop)
+      new_props[k].value = Object.assign({}, prop.value) if ComponentUtils.isObject(prop.value) and not ComponentUtils.isFunction(prop.value)
     new_props
 
   @propValues: (props) ->
@@ -57,9 +57,3 @@ module.exports = class ComponentUtils
   @isFunction: (val) -> Object::toString.call(val) is "[object Function]"
 
   @isString: (val) -> Object::toString.call(val) is "[object String]"
-
-  @shallowClone: (old_obj) ->
-    new_obj = {}
-    for i of old_obj when old_obj.hasOwnProperty(i)
-      new_obj[i] = old_obj[i]
-    new_obj

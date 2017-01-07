@@ -1,3 +1,5 @@
+# polyfills to support IE
+require './shims'
 Utils = require './utils'
 
 module.exports =
