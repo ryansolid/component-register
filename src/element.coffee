@@ -75,7 +75,7 @@ module.exports = class BaseElement extends HTMLElement
 
   lookupProp: (attr_name) ->
     return unless props = @__component_type.props
-    return k for k, v of props when v.attribute is attr_name
+    return k for k, v of props when attr_name in [k, v.attribute]
 
   createEvent: (name, params) ->
     event = document.createEvent('CustomEvent')
