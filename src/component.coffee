@@ -46,6 +46,12 @@ module.exports = class Component
     [delay_time, callback] = [0, delay_time] if Utils.isFunction(delay_time)
     timer = setTimeout callback, delay_time
     @addReleaseCallback -> clearTimeout(timer)
+    return timer
+
+  interval: (delay_time, callback) =>
+    timer = setInterval callback, delay_time
+    @addReleaseCallback -> clearInterval(timer)
+    return timer
 
   trigger: (name, data) => @__element.dispatchEvent(@__element.createEvent(name, {detail: data, bubbles: true, cancelable: true}))
 

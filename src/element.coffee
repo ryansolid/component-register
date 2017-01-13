@@ -5,9 +5,9 @@ ComponentParser = require './css_parser'
 module.exports = class BaseElement extends HTMLElement
   boundCallback: =>
     @props = Utils.cloneProps(@__component_type.props)
-    @__updating = []
+    @__updating = {}
     for key, prop of @props then do (key, prop) =>
-      @props[key].value = value if (attr = @getAttribute(prop.attribute))? and value = Utils.parseAttributeValue(attr)
+      @props[key].value = Utils.parseAttributeValue(attr) if (attr = @getAttribute(prop.attribute))?
       @props[key].value = value if (value = @[key])?
       @setAttribute(prop.attribute, reflected) if reflected = Utils.reflect(@props[key].value)
       Object.defineProperty @, key, {
@@ -68,7 +68,8 @@ module.exports = class BaseElement extends HTMLElement
     @__released = true
 
   attributeChangedCallback: (name, old_val, new_val) ->
-    return unless @props
+    # hasAttribute check is to avoid false nulls for frameworks that bind directly to attributes
+    return unless @props and @hasAttribute(name)
     name = @lookupProp(name)
     return if @__updating[name]
     @[name] = Utils.parseAttributeValue(new_val) if name of @props

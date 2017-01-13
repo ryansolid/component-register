@@ -20,4 +20,12 @@ module.exports = class ComponentParser extends NodeFactory
         else
           @tag_name + ' ' + part.replace(':host', '')
     selector = parts.join(',')
+    rulelist.tag_name = @tag_name
     super(selector, rulelist)
+
+  atRule: (name, parameters, rulelist) ->
+    # prevent keyframes from being scoped
+    if name.indexOf('keyframe') isnt 1
+      for rule in rulelist.rules
+        rule.selector = rule.selector.replace(rule.rulelist.tag_name + ' ', '')
+    super
