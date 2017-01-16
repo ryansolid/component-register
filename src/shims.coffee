@@ -1,3 +1,5 @@
+require 'es6-symbol/implement'
+
 ###
 # Object.assign
 ###
