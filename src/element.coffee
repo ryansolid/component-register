@@ -58,6 +58,16 @@ module.exports = class BaseElement extends HTMLElement
     else
       root = document.createElement('_shadow_')
       root.appendChild(node) while node = nodes[0]
+
+      # slot replacement algorithm
+      for node in root.querySelectorAll('slot')
+        nodes = @childNodes
+        nodes = @querySelectorAll("[slot='#{selector}']") if selector = node.getAttribute('name')
+        nodes = Array::slice.call(nodes)
+        if nodes.length
+          node.removeChild(child) while child = node.firstChild
+          node.appendChild(child) while child = nodes?.shift()
+      @removeChild(child) while child = @firstChild
       @appendChild(root)
     return
 
