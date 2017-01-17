@@ -57,7 +57,7 @@ module.exports = class BaseElement extends HTMLElement
         node.host = @ unless Utils.nativeShadowDOM
         @shadowRoot.appendChild(node)
     else
-      root = document.createElement('_shadow-root_')
+      root = document.createElement('_root_')
       root.innerHTML = @__component_type.template
 
       # slot replacement algorithm
@@ -68,6 +68,7 @@ module.exports = class BaseElement extends HTMLElement
         if nodes.length
           node.removeChild(child) while child = node.firstChild
           node.appendChild(child) while child = nodes?.shift()
+          node.__assigned = true
       @removeChild(child) while child = @firstChild
       @appendChild(root)
     return
