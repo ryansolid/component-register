@@ -5,7 +5,7 @@
   "author": "Ryan Carniato",
   "license": "MIT",
   "readmeFilename": "README.md",
-  "main": "src/index.coffee",
+  "main": "lib/index.js",
   "scripts": {
     "prepublish": "coffee --compile --bare --no-header --output lib/ src/"
   },

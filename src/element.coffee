@@ -49,15 +49,16 @@ module.exports = class BaseElement extends HTMLElement
         script.id = 'style-' + @__component_type.tag
         script.textContent = styles
         document.head.appendChild(script)
-    nodes = @__component.renderTemplate(@__component_type.template, @__component)
+
     if Utils.useShadowDOM
+      nodes = @__component.renderTemplate(@__component_type.template, @__component)
       while node = nodes[0]
         # fix for polyfill not updatng parents
         node.host = @ unless Utils.nativeShadowDOM
         @shadowRoot.appendChild(node)
     else
-      root = document.createElement('_shadow_')
-      root.appendChild(node) while node = nodes[0]
+      root = document.createElement('_shadow-root_')
+      root.innerHTML = @__component_type.template
 
       # slot replacement algorithm
       for node in root.querySelectorAll('slot')
