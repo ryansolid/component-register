@@ -31,10 +31,12 @@ module.exports = class BaseElement extends HTMLElement
       @__component.onMounted?(@)
     , 0
 
-    @attachShadow({ mode: 'open' })
-    @shadowRoot.host or= @
+    if Utils.useShadowDOM
+      @attachShadow({ mode: 'open' })
+      @shadowRoot.host or= @
+
     if styles = @__component_type.styles
-      if Utils.nativeShadowDOM
+      if Utils.useShadowDOM and Utils.nativeShadowDOM
         script = document.createElement('style')
         script.textContent = styles
         @shadowRoot.appendChild(script)
@@ -48,10 +50,15 @@ module.exports = class BaseElement extends HTMLElement
         script.textContent = styles
         document.head.appendChild(script)
     nodes = @__component.renderTemplate(@__component_type.template, @__component)
-    while node = nodes[0]
-      # fix for polyfill not updatng parents
-      node.host = @
-      @shadowRoot.appendChild(node)
+    if Utils.useShadowDOM
+      while node = nodes[0]
+        # fix for polyfill not updatng parents
+        node.host = @ unless Utils.nativeShadowDOM
+        @shadowRoot.appendChild(node)
+    else
+      root = document.createElement('_shadow_')
+      root.appendChild(node) while node = nodes[0]
+      @appendChild(root)
     return
 
   connectedCallback: ->
@@ -60,9 +67,10 @@ module.exports = class BaseElement extends HTMLElement
     delete @context
 
   disconnectedCallback: ->
-    while node = @shadowRoot?.firstChild
-      @__component?.unbindDom(node)
-      @shadowRoot.removeChild(node)
+    if Utils.useShadowDOM
+      while node = @shadowRoot?.firstChild
+        @__component?.unbindDom(node)
+        @shadowRoot.removeChild(node)
     @__component?.onRelease?(@)
     delete @__component
     @__released = true

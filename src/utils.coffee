@@ -1,16 +1,11 @@
 div = document.createElement('div');
 shadowDOMV1 = !!div.attachShadow;
 
-# force polyfill on Safari's poor Shadow Dom implementation (missing host styles)
-# is_safari = navigator.userAgent.toLowerCase().indexOf('safari/') > -1 and navigator.userAgent.toLowerCase().indexOf('chrome/') is -1
-
-### force polyfill until browsers are consistent ###
-{v1} = require 'skatejs-named-slots'
-v1() if shadowDOMV1 # if is_safari
 require 'document-register-element'
 
 module.exports = class ComponentUtils
-  @nativeShadowDOM: false #shadowDOMV1 and not is_safari
+  @nativeShadowDOM: shadowDOMV1
+  @useShadowDOM: true
 
   @normalizePropDefs: (props) ->
     return unless props
