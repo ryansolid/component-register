@@ -13,6 +13,9 @@ module.exports =
     element = class CustomElement extends component::element_type
       __component_type: component
       @observedAttributes: (prop.attribute for name, prop of component.props)
+      constructor: ->
+        # Safari 9 fix
+        return component::element_type.apply(@, arguments)
     registry.register(component)
     customElements.define(component.tag, element)
     component

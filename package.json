@@ -1,7 +1,7 @@
 {
   "name": "component-register",
   "description": "Basic Wrapper around Web Components",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "author": "Ryan Carniato",
   "license": "MIT",
   "readmeFilename": "README.md",

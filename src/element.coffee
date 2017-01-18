@@ -3,6 +3,10 @@ ComponentParser = require './css_parser'
 {Parser, Stringifier} = require 'shady-css-parser'
 
 module.exports = class BaseElement extends HTMLElement
+  constructor: ->
+    # Safari 9 fix
+    return HTMLElement.apply(@, arguments)
+
   boundCallback: =>
     @props = Utils.cloneProps(@__component_type.props)
     @__updating = {}
