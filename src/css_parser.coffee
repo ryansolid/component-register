@@ -26,6 +26,6 @@ module.exports = class ComponentParser extends NodeFactory
   atRule: (name, parameters, rulelist) ->
     # prevent non-media at rules from being scoped
     if name.indexOf('media') is -1
-      for rule in rulelist.rules
+      for rule in rulelist.rules when rule.selector
         rule.selector = rule.selector.replace(rule.rulelist.tag_name + ' ', '')
     super
