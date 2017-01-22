@@ -40,7 +40,7 @@ module.exports = class BaseElement extends HTMLElement
       @shadowRoot.host or= @
 
     if styles = @__component_type.styles
-      if Utils.useShadowDOM and Utils.nativeShadowDOM
+      if Utils.useShadowDOM
         script = document.createElement('style')
         script.textContent = styles
         @shadowRoot.appendChild(script)
@@ -56,10 +56,7 @@ module.exports = class BaseElement extends HTMLElement
 
     if Utils.useShadowDOM
       nodes = @__component.renderTemplate(@__component_type.template, @__component)
-      while node = nodes[0]
-        # fix for polyfill not updatng parents
-        node.host = @ unless Utils.nativeShadowDOM
-        @shadowRoot.appendChild(node)
+      @shadowRoot.appendChild(node) while node = nodes[0]
     else
       root = document.createElement('_root_')
       root.innerHTML = @__component_type.template
@@ -72,7 +69,7 @@ module.exports = class BaseElement extends HTMLElement
         if nodes.length
           node.removeChild(child) while child = node.firstChild
           node.appendChild(child) while child = nodes?.shift()
-          node.__assigned = true
+          node.setAttribute('assigned','')
       @removeChild(child) while child = @firstChild
       @appendChild(root)
     return

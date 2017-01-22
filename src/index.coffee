@@ -1,5 +1,7 @@
-# polyfills to support IE
+# polyfills
 require './shims'
+require 'document-register-element'
+
 Utils = require './utils'
 
 module.exports =

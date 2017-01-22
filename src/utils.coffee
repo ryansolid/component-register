@@ -1,11 +1,8 @@
 div = document.createElement('div');
 shadowDOMV1 = !!div.attachShadow;
 
-require 'document-register-element'
-
 module.exports = class ComponentUtils
-  @nativeShadowDOM: shadowDOMV1
-  @useShadowDOM: true
+  @useShadowDOM: shadowDOMV1
 
   @normalizePropDefs: (props) ->
     return unless props
