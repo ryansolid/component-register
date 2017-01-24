@@ -56,7 +56,7 @@ module.exports = class BaseElement extends HTMLElement
 
     if Utils.useShadowDOM
       nodes = @__component.renderTemplate(@__component_type.template, @__component)
-      @shadowRoot.appendChild(node) while node = nodes[0]
+      @shadowRoot.appendChild(node) while node = nodes?.shift()
     else
       root = document.createElement('_root_')
       root.innerHTML = @__component_type.template

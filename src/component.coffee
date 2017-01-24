@@ -36,7 +36,7 @@ module.exports = class Component
     el = document.createElement('div')
     el.innerHTML = template
     @bindDom(el, context)
-    return el.childNodes
+    Array::slice.call(el.childNodes)
 
     ###############
   # Integration Methods
