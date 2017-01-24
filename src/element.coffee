@@ -40,7 +40,7 @@ module.exports = class BaseElement extends HTMLElement
       @shadowRoot.host or= @
 
     if styles = @__component_type.styles
-      if Utils.useShadowDOM
+      if Utils.useShadowDOM and not Utils.polyfillCSS
         script = document.createElement('style')
         script.textContent = styles
         @shadowRoot.appendChild(script)
