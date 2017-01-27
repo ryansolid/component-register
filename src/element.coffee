@@ -45,11 +45,12 @@ module.exports = class BaseElement extends HTMLElement
     if styles = @__component_type.styles
       if Utils.useShadowDOM and not Utils.polyfillCSS
         script = document.createElement('style')
+        script.setAttribute('type', 'text/css')
         script.textContent = styles
         @shadowRoot.appendChild(script)
       # append globally otherwise
       else
-        unless script = document.head.querySelector('#style-' + @__component_type.tag)
+        unless script = document.head.querySelector("[scope='#{@__component_type.tag}']")
           identifier = "_co#{COUNTER++}"
           parser = new Parser(new ComponentParser(@__component_type.tag, identifier))
           parsed = parser.parse(styles)
