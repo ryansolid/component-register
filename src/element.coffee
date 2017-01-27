@@ -1,6 +1,8 @@
 Utils = require './utils'
 ComponentParser = require './css_parser'
+HTMLParse = require './html_parser'
 {Parser, Stringifier} = require 'shady-css-parser'
+COUNTER = 0
 
 module.exports = class BaseElement extends HTMLElement
   constructor: ->
@@ -35,6 +37,7 @@ module.exports = class BaseElement extends HTMLElement
       @__component.onMounted?(@)
     , 0
 
+    template = @__component_type.template
     if Utils.useShadowDOM
       @attachShadow({ mode: 'open' })
       @shadowRoot.host or= @
@@ -45,21 +48,26 @@ module.exports = class BaseElement extends HTMLElement
         script.textContent = styles
         @shadowRoot.appendChild(script)
       # append globally otherwise
-      else if not document.head.querySelector('#style-' + @__component_type.tag)
-        parser = new Parser(new ComponentParser(@__component_type.tag))
-        parsed = parser.parse(styles)
-        styles = (new Stringifier()).stringify(parsed)
-        script = document.createElement('style')
-        script.id = 'style-' + @__component_type.tag
-        script.textContent = styles
-        document.head.appendChild(script)
+      else
+        unless script = document.head.querySelector('#style-' + @__component_type.tag)
+          identifier = "_co#{COUNTER++}"
+          parser = new Parser(new ComponentParser(@__component_type.tag, identifier))
+          parsed = parser.parse(styles)
+          styles = (new Stringifier()).stringify(parsed)
+          script = document.createElement('style')
+          script.setAttribute('type', 'text/css')
+          script.setAttribute('scope', @__component_type.tag)
+          script.id = identifier
+          script.textContent = styles
+          document.head.appendChild(script)
+        template = HTMLParse(template, script.id)
 
     if Utils.useShadowDOM
-      nodes = @__component.renderTemplate(@__component_type.template, @__component)
+      nodes = @__component.renderTemplate(template, @__component)
       @shadowRoot.appendChild(node) while node = nodes?.shift()
     else
       root = document.createElement('_root_')
-      root.innerHTML = @__component_type.template
+      root.innerHTML = template
 
       # slot replacement algorithm
       for node in root.querySelectorAll('slot')

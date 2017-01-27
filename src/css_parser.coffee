@@ -2,10 +2,11 @@
 SLOTTED = /(?:::slotted)(?:\(((?:\([^)(]*\)|[^)(]*)+?)\))/
 HOST = /(:host)(?:\(((?:\([^)(]*\)|[^)(]*)+?)\))/
 HOSTCONTEXT = /(:host-context)(?:\(((?:\([^)(]*\)|[^)(]*)+?)\))/
+CLASSNAME = /\.([a-zA-Z0-9_\-]*)/g
 
 # used to approximate shadow dom css encapsulation
 module.exports = class ComponentParser extends NodeFactory
-  constructor: (@tag_name) ->
+  constructor: (@tag_name, @identifier) ->
   ruleset: (selector, rulelist) ->
     parts = selector.split(',')
     for part, i in parts
@@ -19,6 +20,7 @@ module.exports = class ComponentParser extends NodeFactory
           part.replace(HOST, (m, c, expr) => "#{@tag_name}#{expr}")
         else
           @tag_name + ' ' + part.replace(':host', '')
+          parts[i] = parts[i].replace(CLASSNAME, "$&[#{@identifier}]")
     selector = parts.join(',')
     rulelist.tag_name = @tag_name
     super(selector, rulelist)
