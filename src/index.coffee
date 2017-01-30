@@ -1,7 +1,7 @@
 # polyfills
 require './shims'
 require 'document-register-element'
-
+require './component_element'
 Utils = require './utils'
 
 module.exports =

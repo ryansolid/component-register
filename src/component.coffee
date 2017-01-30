@@ -38,6 +38,23 @@ module.exports = class Component
     @bindDom(el, context)
     Array::slice.call(el.childNodes)
 
+  ###
+  # used by component-element to inject custom template/styles
+  ###
+  createComponent: (options) =>
+    comp = @
+    class CustomComponent extends Component
+      @tag: 'component-element', @css_scope: options.css_scope
+      constructor: ->
+        super
+        Object.assign(@, options.context) if options.context
+      bindDom: comp.bindDom
+      unbindDom: comp.unbindDom
+
+    CustomComponent.template = options.template if options.template
+    CustomComponent.styles = options.styles if options.styles
+    return CustomComponent
+
     ###############
   # Integration Methods
   # Here to make sure asyncronous operations only last the lifetime of the component

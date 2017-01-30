@@ -15,7 +15,7 @@ module.exports = class ComponentParser extends NodeFactory
         c + "[#{@identifier}]")
       parts[i] = switch
         when part.indexOf('::slotted') isnt -1
-          part.replace SLOTTED, (m, c, expr) => @tag_name + ' > ' + expr
+          part.replace SLOTTED, (m, expr) => @tag_name + ' slot > ' + expr
         when part.indexOf(':host-context') isnt -1
           part.replace(HOSTCONTEXT, (m, c, expr) => "#{@tag_name}#{expr}") +
             part.replace(HOSTCONTEXT, (m, c, expr) => ", #{expr} #{@tag_name}")
@@ -25,11 +25,3 @@ module.exports = class ComponentParser extends NodeFactory
     selector = parts.join(',')
     rulelist.tag_name = @tag_name
     super(selector, rulelist)
-
-  # Probably not needed anymore
-  # atRule: (name, parameters, rulelist) ->
-  #   # prevent non-media at rules from being scoped
-  #   if name.indexOf('media') is -1
-  #     for rule in rulelist.rules when rule.selector
-  #       rule.selector = rule.selector.replace(rule.rulelist.tag_name + ' ', '')
-  #   super

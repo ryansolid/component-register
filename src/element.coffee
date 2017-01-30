@@ -50,14 +50,16 @@ module.exports = class BaseElement extends HTMLElement
         @shadowRoot.appendChild(script)
       # append globally otherwise
       else
-        unless script = document.head.querySelector("[scope='#{@__component_type.tag}']")
+        scope = @__component_type.tag
+        scope += '-' + @__component_type.css_scope if @__component_type.css_scope
+        unless script = document.head.querySelector("[scope='#{scope}']")
           identifier = "_co#{COUNTER++}"
           parser = new Parser(new ComponentParser(@__component_type.tag, identifier))
           parsed = parser.parse(styles)
           styles = (new Stringifier()).stringify(parsed)
           script = document.createElement('style')
           script.setAttribute('type', 'text/css')
-          script.setAttribute('scope', @__component_type.tag)
+          script.setAttribute('scope', scope)
           script.id = identifier
           script.textContent = styles
           document.head.appendChild(script)
