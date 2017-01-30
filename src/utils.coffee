@@ -1,9 +1,11 @@
 div = document.createElement('div');
 shadowDOMV1 = !!div.attachShadow;
+customProperties = window.CSS and CSS.supports('color', 'var(--primary)')
 
 module.exports = class ComponentUtils
   @useShadowDOM: shadowDOMV1
   @polyfillCSS: !shadowDOMV1
+  @polyfillCustomProperties: !customProperties
 
   @normalizePropDefs: (props) ->
     return unless props
@@ -30,6 +32,7 @@ module.exports = class ComponentUtils
   @toAttribute: (prop_name) -> prop_name.replace(/_/g, '-').toLowerCase()
   @toEventName: (prop_name) -> prop_name.replace(/_/g, '').toLowerCase()
   @toComponentName: (tag) -> tag?.toLowerCase().replace(/(^|-)([a-z])/g, (test) -> test.toUpperCase().replace('-',''))
+  @toTagName: (component_name) -> component_name.replace(/\.?([A-Z]+)/g, (x,y) ->  "-" + y.toLowerCase()).replace(/^-/, "")
 
   @parseAttributeValue: (value) ->
     return unless value

@@ -30,6 +30,8 @@ module.exports = class Component
     callback(@) while callback = @__release_callbacks.pop()
     delete @__element
 
+  wasReleased: => !!@__released
+
   addReleaseCallback: (fn) => @__release_callbacks.push(fn)
 
   renderTemplate: (template, context={}) =>
