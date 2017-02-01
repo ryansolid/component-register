@@ -29,6 +29,12 @@ module.exports = class ComponentUtils
     values[k] = prop.value for k, prop of props
     values
 
+  # shallow diff and order matters
+  @arrayDiff: (array1, array2) ->
+    return false unless array1.length is array2.length
+    return false for item, i in array1 when item isnt array2[i]
+    true
+
   @toAttribute: (prop_name) -> prop_name.replace(/_/g, '-').toLowerCase()
   @toEventName: (prop_name) -> prop_name.replace(/_/g, '').toLowerCase()
   @toComponentName: (tag) -> tag?.toLowerCase().replace(/(^|-)([a-z])/g, (test) -> test.toUpperCase().replace('-',''))
