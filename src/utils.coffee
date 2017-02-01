@@ -31,9 +31,9 @@ module.exports = class ComponentUtils
 
   # shallow diff and order matters
   @arrayDiff: (array1, array2) ->
-    return false unless array1.length is array2.length
-    return false for item, i in array1 when item isnt array2[i]
-    true
+    return true unless array1.length is array2.length
+    return true for item, i in array1 when item isnt array2[i]
+    false
 
   @toAttribute: (prop_name) -> prop_name.replace(/_/g, '-').toLowerCase()
   @toEventName: (prop_name) -> prop_name.replace(/_/g, '').toLowerCase()
