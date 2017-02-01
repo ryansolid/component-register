@@ -11,7 +11,7 @@ VARIABLE_CONTEXT = {}
 
 # used to approximate shadow dom css encapsulation
 module.exports = class ComponentParser extends NodeFactory
-  constructor: (@tag_name, @identifier) ->
+  constructor: (@tag_name, @identifier, @host_identifier) ->
     @tag_names = Registry.registeredTags() if Utils.polyfillCustomProperties
   ruleset: (selector, rulelist) ->
     parts = selector.split(',')
@@ -22,14 +22,14 @@ module.exports = class ComponentParser extends NodeFactory
       # parse custom vars
       if (var_rules = rulelist.rules.filter((rule)-> rule.name.indexOf('--') is 0)).length
         for tag in @tag_names when selector.indexOf(tag) isnt -1
-          VARIABLE_CONTEXT[tag] or= {}
-          VARIABLE_CONTEXT[tag][rule.name] = rule.value.text for rule in var_rules
+          VARIABLE_CONTEXT[tag+@identifier] or= {}
+          VARIABLE_CONTEXT[tag+@identifier][rule.name] = rule.value.text for rule in var_rules
 
       # replace custom vars
       if (var_rule_vals = rulelist.rules.filter((rule) -> rule.value?.text?.indexOf('var') is 0)).length
         for rule in var_rule_vals
           var_match = rule.value.text.match(VAR_RULE)
-          rule.value.text = VARIABLE_CONTEXT[@tag_name]?[var_match[1]] or var_match[2]
+          rule.value.text = VARIABLE_CONTEXT[@tag_name+@host_identifier]?[var_match[1]] or var_match[2]
 
     # replace shadow dom selectors
     for part, i in parts when part.indexOf('%') is -1 and not (part.trim() in ['to', 'from'])

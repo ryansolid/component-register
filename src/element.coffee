@@ -41,6 +41,9 @@ module.exports = class BaseElement extends HTMLElement
     if Utils.useShadowDOM
       @attachShadow({ mode: 'open' })
       @shadowRoot.host or= @
+      @childRoot = @shadowRoot
+    else
+      @childRoot = document.createElement('_root_')
 
     if styles = @__component_type.styles
       if Utils.useShadowDOM and not Utils.polyfillCSS
@@ -53,8 +56,9 @@ module.exports = class BaseElement extends HTMLElement
         scope = @__component_type.tag
         scope += '-' + @__component_type.css_scope if @__component_type.css_scope
         unless script = document.head.querySelector("[scope='#{scope}']")
-          identifier = "_co#{COUNTER++}"
-          parser = new Parser(new ComponentParser(@__component_type.tag, identifier))
+          @childRoot.cssIdentifier = identifier = "_co#{COUNTER++}"
+          host_identifier = attr.name for attr in @attributes when attr.name.indexOf('_co') is 0
+          parser = new Parser(new ComponentParser(@__component_type.tag, identifier, host_identifier))
           parsed = parser.parse(styles)
           styles = (new Stringifier()).stringify(parsed)
           script = document.createElement('style')
@@ -69,11 +73,9 @@ module.exports = class BaseElement extends HTMLElement
       nodes = @__component.renderTemplate(template, @__component)
       @shadowRoot.appendChild(node) while node = nodes?.shift()
     else
-      root = document.createElement('_root_')
-      root.innerHTML = template
-
+      @childRoot.innerHTML = template
       # slot replacement algorithm
-      for node in root.querySelectorAll('slot')
+      for node in @childRoot.querySelectorAll('slot')
         nodes = @childNodes
         nodes = @querySelectorAll("[slot='#{selector}']") if selector = node.getAttribute('name')
         nodes = Array::slice.call(nodes)
@@ -82,7 +84,7 @@ module.exports = class BaseElement extends HTMLElement
           node.appendChild(child) while child = nodes?.shift()
           node.setAttribute('assigned','')
       @removeChild(child) while child = @firstChild
-      @appendChild(root)
+      @appendChild(@childRoot)
     return
 
   connectedCallback: ->
