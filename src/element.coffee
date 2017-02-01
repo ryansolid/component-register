@@ -97,9 +97,10 @@ module.exports = class BaseElement extends HTMLElement
       while node = @shadowRoot?.firstChild
         @__component?.unbindDom(node)
         @shadowRoot.removeChild(node)
-    @__component?.onRelease?(@)
-    delete @__component
-    @__released = true
+    if @__component
+      @__component?.onRelease?(@)
+      delete @__component
+      @__released = true
 
   attributeChangedCallback: (name, old_val, new_val) ->
     # hasAttribute check is to avoid false nulls for frameworks that bind directly to attributes
