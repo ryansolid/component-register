@@ -17,4 +17,5 @@ class ComponentElement extends Element
     'component'
 
 Registry.register({tag: TAG})
-customElements.define(TAG, ComponentElement)
+# document-register-element is slow to start up and will remove tags
+setTimeout (-> customElements.define(TAG, ComponentElement)), 0
