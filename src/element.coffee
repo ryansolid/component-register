@@ -92,6 +92,7 @@ module.exports = class BaseElement extends HTMLElement
   connectedCallback: ->
     if (context = @context) or @getAttribute('data-root')?
       @__component_type::bindDom(@, context or {})
+      @removeAttribute('data-root')
     delete @context
 
   disconnectedCallback: ->
