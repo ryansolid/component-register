@@ -75,7 +75,9 @@ module.exports = class BaseElement extends HTMLElement
     else
       @childRoot.innerHTML = template
       # slot replacement algorithm
-      for node in @childRoot.querySelectorAll('slot')
+      slots = Array::slice.call(@childRoot.querySelectorAll('slot[name]'))
+      slots = slots.concat(Array::slice.call(@childRoot.querySelectorAll('slot:not([name])')))
+      for node in slots
         nodes = @childNodes
         nodes = @querySelectorAll("[slot='#{selector}']") if selector = node.getAttribute('name')
         nodes = Array::slice.call(nodes)
