@@ -26,6 +26,13 @@ module.exports = class BaseElement extends HTMLElement
           delete @__updating[key]
       }
 
+    if Utils.useShadowDOM
+      @attachShadow({ mode: 'open' })
+      @shadowRoot.host or= @
+      @childRoot = @shadowRoot
+    else
+      @childRoot = document.createElement('_root_')
+
     try
       @__component = new @__component_type(@, Utils.propValues(@props))
     catch err
@@ -38,13 +45,6 @@ module.exports = class BaseElement extends HTMLElement
     , 0
 
     template = @__component_type.template
-    if Utils.useShadowDOM
-      @attachShadow({ mode: 'open' })
-      @shadowRoot.host or= @
-      @childRoot = @shadowRoot
-    else
-      @childRoot = document.createElement('_root_')
-
     if styles = @__component_type.styles
       if Utils.useShadowDOM and not Utils.polyfillCSS
         script = document.createElement('style')
