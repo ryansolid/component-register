@@ -69,7 +69,7 @@ module.exports = class BaseElement extends HTMLElement
     return
 
   connectedCallback: ->
-    if (context = @context) or @getAttribute('data-root')? or @__component_type::auto_bind
+    if (context = @context) or @getAttribute('data-root')? or @__component_type?::auto_bind
       @__component_type::bindDom(@, context or {})
       @removeAttribute('data-root')
     delete @context
