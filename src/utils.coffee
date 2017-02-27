@@ -21,7 +21,8 @@ module.exports = class ComponentUtils
     new_props = {}
     for k, prop of props
       new_props[k] = Object.assign({}, prop)
-      new_props[k].value = Object.assign({}, prop.value) if ComponentUtils.isObject(prop.value) and not ComponentUtils.isFunction(prop.value)
+      new_props[k].value = Object.assign({}, prop.value) if ComponentUtils.isObject(prop.value) and not ComponentUtils.isFunction(prop.value) and not Array.isArray(prop.value)
+      new_props[k].value = prop.value[..] if Array.isArray(prop.value)
     new_props
 
   @propValues: (props) ->

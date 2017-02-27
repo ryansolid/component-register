@@ -44,30 +44,9 @@ module.exports = class BaseElement extends HTMLElement
       @__component.onMounted?(@)
     , 0
 
-    template = @__component_type.template
-    if styles = @__component_type.styles
-      if Utils.useShadowDOM and not Utils.polyfillCSS
-        script = document.createElement('style')
-        script.setAttribute('type', 'text/css')
-        script.textContent = styles
-        @shadowRoot.appendChild(script)
-      # append globally otherwise
-      else
-        scope = @__component_type.tag
-        scope += '-' + @__component_type.css_scope if @__component_type.css_scope
-        unless script = document.head.querySelector("[scope='#{scope}']")
-          @childRoot.cssIdentifier = identifier = "_co#{COUNTER++}"
-          host_identifier = attr.name for attr in @attributes when attr.name.indexOf('_co') is 0
-          parser = new Parser(new ComponentParser(@__component_type.tag, identifier, host_identifier))
-          parsed = parser.parse(styles)
-          styles = (new Stringifier()).stringify(parsed)
-          script = document.createElement('style')
-          script.setAttribute('type', 'text/css')
-          script.setAttribute('scope', scope)
-          script.id = identifier
-          script.textContent = styles
-          document.head.appendChild(script)
-        template = HTMLParse(template, script.id)
+    script = @appendStyles()
+    return unless template = @__component_type.template
+    template = HTMLParse(template, script.id) if script and Utils.polyfillCSS
 
     if Utils.useShadowDOM
       nodes = @__component.renderTemplate(template, @__component)
@@ -90,7 +69,7 @@ module.exports = class BaseElement extends HTMLElement
     return
 
   connectedCallback: ->
-    if (context = @context) or @getAttribute('data-root')?
+    if (context = @context) or @getAttribute('data-root')? or @__component_type::auto_bind
       @__component_type::bindDom(@, context or {})
       @removeAttribute('data-root')
     delete @context
@@ -111,6 +90,31 @@ module.exports = class BaseElement extends HTMLElement
     name = @lookupProp(name)
     return if @__updating[name]
     @[name] = Utils.parseAttributeValue(new_val) if name of @props
+
+  appendStyles: =>
+    if styles = @__component_type.styles
+      if Utils.useShadowDOM and not Utils.polyfillCSS
+        script = document.createElement('style')
+        script.setAttribute('type', 'text/css')
+        script.textContent = styles
+        @shadowRoot.appendChild(script)
+        return script
+      # append globally otherwise
+      scope = @__component_type.tag
+      scope += '-' + @__component_type.css_scope if @__component_type.css_scope
+      unless script = document.head.querySelector("[scope='#{scope}']")
+        @childRoot.cssIdentifier = identifier = "_co#{COUNTER++}"
+        host_identifier = attr.name for attr in @attributes when attr.name.indexOf('_co') is 0
+        parser = new Parser(new ComponentParser(@__component_type.tag, identifier, host_identifier))
+        parsed = parser.parse(styles)
+        styles = (new Stringifier()).stringify(parsed)
+        script = document.createElement('style')
+        script.setAttribute('type', 'text/css')
+        script.setAttribute('scope', scope)
+        script.id = identifier
+        script.textContent = styles
+        document.head.appendChild(script)
+      return script
 
   lookupProp: (attr_name) ->
     return unless props = @__component_type.props
