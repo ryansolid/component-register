@@ -46,7 +46,7 @@ module.exports = class BaseElement extends HTMLElement
 
     script = @appendStyles()
     return unless template = @__component_type.template
-    template = HTMLParse(template, script.id) if script and Utils.polyfillCSS
+    template = HTMLParse(template, script.id) if script and (not Utils.useShadowDOM or Utils.polyfillCSS)
 
     if Utils.useShadowDOM
       nodes = @__component.renderTemplate(template, @__component)
