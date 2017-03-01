@@ -72,8 +72,10 @@ module.exports = class BaseElement extends HTMLElement
     return
 
   connectedCallback: ->
-    @__component_type?::bindDom(@, @context or {})
-    delete @context
+    # check that infact it connected since polyfill sometimes double calls
+    if Utils.connectedToDOM(@)
+      @__component_type?::bindDom(@, @context or {})
+      delete @context
 
   disconnectedCallback: ->
     if Utils.useShadowDOM

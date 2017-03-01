@@ -68,3 +68,10 @@ module.exports = class ComponentUtils
     new MutationObserver(callback).observe(div, attributes: true)
     div.classList.toggle 'foo'
     return
+
+  @connectedToDOM: (node) ->
+    return node.isConnected if 'isConnected' of node
+    return true if document.body.contains(node)
+    return false unless Utils.useShadowDOM
+    null while (node = node.parentNode or node.host) and node isnt document.documentElement
+    node is document.documentElement
