@@ -8,13 +8,14 @@ class ComponentElement extends Element
     return Element.apply(@, arguments)
 
   boundCallback: =>
-    @__component_type = @component
+    @__component_type or= @component
     delete @component
     super
 
-  lookupProp: (attr_name) ->
-    return unless attr_name is 'component'
-    'component'
+  connectedCallback: =>
+    @__component_type or= @component
+    delete @component
+    super
 
 Registry.register({tag: TAG})
 # document-register-element is slow to start up and will remove tags

@@ -6,6 +6,7 @@ module.exports = class ComponentUtils
   @useShadowDOM: shadowDOMV1
   @polyfillCSS: !shadowDOMV1
   @polyfillCustomProperties: !customProperties
+  @excludeTags = []
 
   @normalizePropDefs: (props) ->
     return unless props
@@ -37,6 +38,7 @@ module.exports = class ComponentUtils
     false
 
   @toAttribute: (prop_name) -> prop_name.replace(/_/g, '-').toLowerCase()
+  @toProperty: (prop_name) -> prop_name.replace(/-/g, '_')
   @toEventName: (prop_name) -> prop_name.replace(/_/g, '').toLowerCase()
   @toComponentName: (tag) -> tag?.toLowerCase().replace(/(^|-)([a-z])/g, (test) -> test.toUpperCase().replace('-',''))
   @toTagName: (component_name) -> component_name.replace(/\.?([A-Z]+)/g, (x,y) ->  "-" + y.toLowerCase()).replace(/^-/, "")

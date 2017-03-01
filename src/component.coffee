@@ -72,7 +72,11 @@ module.exports = class Component
     @addReleaseCallback -> clearInterval(timer)
     return timer
 
-  trigger: (name, data) => @__element.dispatchEvent(@__element.createEvent(name, {detail: data, bubbles: true, cancelable: true}))
+  trigger: (name, data) =>
+    event = @__element.createEvent(name, {detail: data, bubbles: true, cancelable: true})
+    not_cancelled = true
+    not_cancelled = !!@__element['on'+name]?(event) if 'on' + name of @__element
+    not_cancelled and !!@__element.dispatchEvent(event)
 
   on: (name, handler) =>
     @__element.addEventListener(name, handler)

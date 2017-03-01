@@ -32,6 +32,9 @@ module.exports = class BaseElement extends HTMLElement
       @childRoot = @shadowRoot
     else
       @childRoot = document.createElement('_root_')
+      #disconnect childnodes
+      fragment = document.createDocumentFragment()
+      fragment.appendChild(node) while node = @firstChild
 
     try
       @__component = new @__component_type(@, Utils.propValues(@props))
@@ -57,21 +60,18 @@ module.exports = class BaseElement extends HTMLElement
       slots = Array::slice.call(@childRoot.querySelectorAll('slot[name]'))
       slots = slots.concat(Array::slice.call(@childRoot.querySelectorAll('slot:not([name])')))
       for node in slots
-        nodes = @childNodes
-        nodes = @querySelectorAll("[slot='#{selector}']") if selector = node.getAttribute('name')
+        nodes = fragment.childNodes
+        nodes = fragment.querySelectorAll("[slot='#{selector}']") if selector = node.getAttribute('name')
         nodes = Array::slice.call(nodes)
         if nodes.length
           node.removeChild(child) while child = node.firstChild
           node.appendChild(child) while child = nodes?.shift()
           node.setAttribute('assigned','')
-      @removeChild(child) while child = @firstChild
       @appendChild(@childRoot)
     return
 
   connectedCallback: ->
-    if (context = @context) or @getAttribute('data-root')? or @__component_type?::auto_bind
-      @__component_type::bindDom(@, context or {})
-      @removeAttribute('data-root')
+    @__component_type::bindDom(@, @context or {})
     delete @context
 
   disconnectedCallback: ->
