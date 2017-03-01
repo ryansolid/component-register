@@ -45,7 +45,7 @@ module.exports = class BaseElement extends HTMLElement
     @propertyChange = @__component.onPropertyChange
     Utils.scheduleMicroTask =>
       return if @__released
-      @childRoot.style.display = 'inline' unless Utils.useShadowDOM
+      @childRoot.style.display = '' unless Utils.useShadowDOM
       @__component.onMounted?(@)
 
     script = @appendStyles()
