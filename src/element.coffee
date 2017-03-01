@@ -43,10 +43,13 @@ module.exports = class BaseElement extends HTMLElement
       console.error "Error creating component #{Utils.toComponentName(@__component_type.tag)}:", err
 
     @propertyChange = @__component.onPropertyChange
-    Utils.scheduleMicroTask =>
+    observer = new MutationObserver(Utils.debounce 10, =>
       return if @__released
       @childRoot.style.display = '' unless Utils.useShadowDOM
+      observer.disconnect()
       @__component.onMounted?(@)
+    )
+    observer.observe(@childRoot, {childList: true, subtree: true})
 
     script = @appendStyles()
     return unless template = @__component_type.template
@@ -86,6 +89,7 @@ module.exports = class BaseElement extends HTMLElement
       @__component?.onRelease?(@)
       delete @__component
       @__released = true
+    delete @childRoot
 
   attributeChangedCallback: (name, old_val, new_val) ->
     # hasAttribute check is to avoid false nulls for frameworks that bind directly to attributes
