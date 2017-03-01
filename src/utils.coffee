@@ -62,3 +62,9 @@ module.exports = class ComponentUtils
   @isFunction: (val) -> Object::toString.call(val) is "[object Function]"
 
   @isString: (val) -> Object::toString.call(val) is "[object String]"
+
+  @scheduleMicroTask: (callback) ->
+    div = document.createElement('div')
+    new MutationObserver(callback).observe(div, attributes: true)
+    div.classList.toggle 'foo'
+    return

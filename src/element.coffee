@@ -32,6 +32,7 @@ module.exports = class BaseElement extends HTMLElement
       @childRoot = @shadowRoot
     else
       @childRoot = document.createElement('_root_')
+      @childRoot.style.display = 'none'
       #disconnect childnodes
       fragment = document.createDocumentFragment()
       fragment.appendChild(node) while node = @firstChild
@@ -42,10 +43,10 @@ module.exports = class BaseElement extends HTMLElement
       console.error "Error creating component #{Utils.toComponentName(@__component_type.tag)}:", err
 
     @propertyChange = @__component.onPropertyChange
-    setTimeout =>
+    Utils.scheduleMicroTask =>
       return if @__released
+      @childRoot.style.display = 'inline' unless Utils.useShadowDOM
       @__component.onMounted?(@)
-    , 0
 
     script = @appendStyles()
     return unless template = @__component_type.template
@@ -71,7 +72,7 @@ module.exports = class BaseElement extends HTMLElement
     return
 
   connectedCallback: ->
-    @__component_type::bindDom(@, @context or {})
+    @__component_type?::bindDom(@, @context or {})
     delete @context
 
   disconnectedCallback: ->
