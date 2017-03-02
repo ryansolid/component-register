@@ -32,7 +32,7 @@ module.exports = class BaseElement extends HTMLElement
       @childRoot = @shadowRoot
     else
       @childRoot = document.createElement('_root_')
-      @childRoot.style.display = 'none'
+      @childRoot.style.visibility = 'hidden'
       #disconnect childnodes
       fragment = document.createDocumentFragment()
       fragment.appendChild(node) while node = @firstChild
@@ -45,7 +45,7 @@ module.exports = class BaseElement extends HTMLElement
     @propertyChange = @__component.onPropertyChange
     observer = new MutationObserver(Utils.debounce 10, =>
       return if @__released
-      @childRoot.style.display = '' unless Utils.useShadowDOM
+      @childRoot.style.visibility = '' unless Utils.useShadowDOM
       observer.disconnect()
       @__component.onMounted?(@)
     )
