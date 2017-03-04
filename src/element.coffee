@@ -88,7 +88,9 @@ module.exports = class BaseElement extends HTMLElement
     return unless @props
     return if @__updating[name]
     name = @lookupProp(name)
-    @[name] = Utils.parseAttributeValue(new_val) if name of @props
+    if name of @props
+      return if new_val is null and not @[name]
+      @[name] = Utils.parseAttributeValue(new_val)
 
   processSlots: (fragment) =>
     @__assignableNodes = {}

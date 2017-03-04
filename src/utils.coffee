@@ -52,13 +52,12 @@ module.exports = class ComponentUtils
     parsed
 
   @reflect: (node, attribute, value) ->
-    node.__updating[attribute] = true
     if not ComponentUtils.isObject(value) and (reflect = value?.toString?()) and reflect isnt 'false'
+      node.__updating[attribute] = true
       reflect = '' if reflect is 'true'
       node.setAttribute(attribute, reflect)
+      ComponentUtils.scheduleMicroTask -> delete node.__updating[attribute]
     else node.removeAttribute(attribute)
-    # polyfill calls asyncronously so need to set a timeout
-    ComponentUtils.scheduleMicroTask -> delete node.__updating[attribute]
 
   @isObject: (obj) -> obj isnt null and typeof obj in ['object', 'function']
 
