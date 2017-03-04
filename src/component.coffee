@@ -17,7 +17,7 @@ module.exports = class Component
     prop.value = val
     Utils.reflect(@__element, prop.attribute, val)
     if prop.notify
-      @trigger('propertychange', {value: val, old_value, name})
+      Utils.scheduleMicroTask => @trigger('propertychange', {value: val, old_value, name})
 
   onPropertyChange: (name, val) ->
   onMounted: ->

@@ -58,7 +58,7 @@ module.exports = class ComponentUtils
       node.setAttribute(attribute, reflect)
     else node.removeAttribute(attribute)
     # polyfill calls asyncronously so need to set a timeout
-    setTimeout (-> delete node.__updating[attribute]), 0
+    ComponentUtils.scheduleMicroTask -> delete node.__updating[attribute]
 
   @isObject: (obj) -> obj isnt null and typeof obj in ['object', 'function']
 
@@ -88,3 +88,9 @@ module.exports = class ComponentUtils
       clearTimeout timeout
       timeout = setTimeout(later, wait)
       return
+
+  @scheduleMicroTask: (callback) ->
+    div = document.createElement('div')
+    (observer = new MutationObserver(->observer.disconnect(); callback())).observe(div, attributes: true)
+    div.classList.toggle 'foo'
+    return
