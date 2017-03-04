@@ -14,7 +14,6 @@ module.exports = class ComponentUtils
       unless ComponentUtils.isObject(v) and 'value' of v
         props[k] = {value: v}
       props[k].notify ?= false
-      props[k].event_name or= ComponentUtils.toEventName(k)
       props[k].attribute or= ComponentUtils.toAttribute(k)
     return
 
@@ -39,7 +38,6 @@ module.exports = class ComponentUtils
 
   @toAttribute: (prop_name) -> prop_name.replace(/_/g, '-').toLowerCase()
   @toProperty: (prop_name) -> prop_name.replace(/-/g, '_')
-  @toEventName: (prop_name) -> prop_name.replace(/_/g, '').toLowerCase()
   @toComponentName: (tag) -> tag?.toLowerCase().replace(/(^|-)([a-z])/g, (test) -> test.toUpperCase().replace('-',''))
   @toTagName: (component_name) -> component_name.replace(/\.?([A-Z]+)/g, (x,y) ->  "-" + y.toLowerCase()).replace(/^-/, "")
 
@@ -69,6 +67,10 @@ module.exports = class ComponentUtils
     return false unless Utils.useShadowDOM
     null while (node = node.parentNode or node.host) and node isnt document.documentElement
     node is document.documentElement
+
+  @inComponent: (node, owner) ->
+    null while (node = node.parentNode) and not (node.nodeName in ['SLOT', '_ROOT_']) and node isnt owner
+    node is owner or node.host is owner
 
   @debounce: (wait, callback) ->
     timeout = undefined

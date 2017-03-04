@@ -28,14 +28,14 @@ module.exports = class BaseElement extends HTMLElement
 
     if Utils.useShadowDOM
       @attachShadow({ mode: 'open' })
-      @shadowRoot.host or= @
       @childRoot = @shadowRoot
     else
       @childRoot = document.createElement('_root_')
-      @childRoot.style.visibility = 'hidden'
       #disconnect childnodes
       fragment = document.createDocumentFragment()
       fragment.appendChild(node) while node = @firstChild
+      @processSlots(fragment)
+    @childRoot.host or= @
 
     try
       @__component = new @__component_type(@, Utils.propValues(@props))
@@ -43,36 +43,30 @@ module.exports = class BaseElement extends HTMLElement
       console.error "Error creating component #{Utils.toComponentName(@__component_type.tag)}:", err
 
     @propertyChange = @__component.onPropertyChange
-    observer = new MutationObserver(Utils.debounce 10, =>
+    mounted_observer = new MutationObserver(Utils.debounce 10, =>
       return if @__released
-      @childRoot.style.visibility = '' unless Utils.useShadowDOM
-      observer.disconnect()
+      mounted_observer.disconnect()
       @__component.onMounted?(@)
     )
-    observer.observe(@childRoot, {childList: true, subtree: true})
+    mounted_observer.observe(@childRoot, {childList: true, subtree: true})
+
+    # slot assignment for non-shadow dom
+    if !Utils.useShadowDOM and fragment.childNodes.length
+      slot_observer = new MutationObserver (mutations) =>
+        return if @__released
+        for mutation in mutations when mutation.addedNodes.length
+          continue unless Utils.inComponent(mutation.addedNodes[0], @)
+          slots = @findSlots(mutation.addedNodes)
+          @assignSlot(slot) for slot in slots
+      slot_observer.observe(@childRoot, {childList: true, subtree: true})
 
     script = @appendStyles()
     return unless template = @__component_type.template
     template = HTMLParse(template, script.id) if script and (not Utils.useShadowDOM or Utils.polyfillCSS)
-
-    if Utils.useShadowDOM
-      nodes = @__component.renderTemplate(template, @__component)
-      @shadowRoot.appendChild(node) while node = nodes?.shift()
-    else
-      @childRoot.innerHTML = template
-      # slot replacement algorithm
-      slots = Array::slice.call(@childRoot.querySelectorAll('slot[name]'))
-      slots = slots.concat(Array::slice.call(@childRoot.querySelectorAll('slot:not([name])')))
-      for node in slots
-        nodes = fragment.childNodes
-        nodes = fragment.querySelectorAll("[slot='#{selector}']") if selector = node.getAttribute('name')
-        nodes = Array::slice.call(nodes)
-        if nodes.length
-          node.removeChild(child) while child = node.firstChild
-          node.appendChild(child) while child = nodes?.shift()
-          node.setAttribute('assigned','')
-      @appendChild(@childRoot)
-    return
+    nodes = @__component.renderTemplate(template, @__component)
+    @childRoot.appendChild(node) while node = nodes?.shift()
+    return if Utils.useShadowDOM
+    @appendChild(@childRoot)
 
   connectedCallback: ->
     # check that infact it connected since polyfill sometimes double calls
@@ -90,13 +84,44 @@ module.exports = class BaseElement extends HTMLElement
       delete @__component
       @__released = true
     delete @childRoot
+    delete @__assignableNodes
 
   attributeChangedCallback: (name, old_val, new_val) ->
     # hasAttribute check is to avoid false nulls for frameworks that bind directly to attributes
-    return unless @props and @hasAttribute(name)
+    # return unless @props and @hasAttribute(name)
     name = @lookupProp(name)
     return if @__updating[name]
     @[name] = Utils.parseAttributeValue(new_val) if name of @props
+
+  processSlots: (fragment) =>
+    @__assignableNodes = {}
+    for node in fragment.querySelectorAll("[slot]")
+      name = node.getAttribute('slot')
+      @__assignableNodes[name] or= []
+      @__assignableNodes[name].push(node)
+
+    default_slot = []
+    default_slot.push(node) for node in fragment.childNodes when not node.hasAttribute('slot')
+    @__assignableNodes['_default'] = default_slot
+
+  findSlots: (nodes) ->
+    slots = []
+    for node in nodes
+      switch node.nodeName
+        when 'SLOT' then slots.push(node)
+        when '_ROOT_' then continue
+        else
+          slots.push.apply(slots, @findSlots(node.childNodes)) if node.childNodes.length
+    return slots
+
+  assignSlot: (slot) ->
+    name = slot.getAttribute('name')
+    name = '_default' unless name
+    nodes = @__assignableNodes[name]
+    if nodes.length
+      slot.removeChild(child) while child = slot.firstChild
+      slot.appendChild(child) for child in nodes
+      slot.setAttribute('assigned','')
 
   appendStyles: =>
     if styles = @__component_type.styles

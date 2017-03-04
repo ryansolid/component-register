@@ -13,13 +13,14 @@ module.exports = class Component
     return unless name of @__element.props
     prop = @__element.props[name]
     return if prop.value is val and not Array.isArray(val)
+    old_value = prop.value
     prop.value = val
     if reflected = Utils.reflect(val)
       @__element.__updating[name] = true
       @__element.setAttribute(prop.attribute, reflected)
       delete  @__element.__updating[name]
     if prop.notify
-      @trigger(prop.event_name, val)
+      @trigger('propertychange', {value: val, old_value, name})
 
   onPropertyChange: (name, val) ->
   onMounted: ->
