@@ -87,8 +87,7 @@ module.exports = class BaseElement extends HTMLElement
     delete @__assignableNodes
 
   attributeChangedCallback: (name, old_val, new_val) ->
-    # hasAttribute check is to avoid false nulls for frameworks that bind directly to attributes
-    # return unless @props and @hasAttribute(name)
+    return unless @props
     name = @lookupProp(name)
     return if @__updating[name]
     @[name] = Utils.parseAttributeValue(new_val) if name of @props
@@ -148,7 +147,6 @@ module.exports = class BaseElement extends HTMLElement
       return script
 
   lookupProp: (attr_name) ->
-    return unless @props
     return unless props = @__component_type.props
     return k for k, v of props when attr_name in [k, v.attribute]
 
