@@ -15,15 +15,13 @@ module.exports = class BaseElement extends HTMLElement
     for key, prop of @props then do (key, prop) =>
       @props[key].value = Utils.parseAttributeValue(attr) if (attr = @getAttribute(prop.attribute))?
       @props[key].value = value if (value = @[key])?
-      @setAttribute(prop.attribute, reflected) if reflected = Utils.reflect(@props[key].value)
+      Utils.reflect(@, prop.attribute, @props[key].value)
       Object.defineProperty @, key, {
         get: ->  @props[key].value
         set: (val) ->
-          @__updating[key] = true
           @props[key].value = val
-          @setAttribute(prop.attribute, reflected) if reflected = Utils.reflect(val)
+          Utils.reflect(@, prop.attribute, @props[key].value)
           @propertyChange?(key, val)
-          delete @__updating[key]
       }
 
     if Utils.useShadowDOM
@@ -88,8 +86,8 @@ module.exports = class BaseElement extends HTMLElement
 
   attributeChangedCallback: (name, old_val, new_val) ->
     return unless @props
-    name = @lookupProp(name)
     return if @__updating[name]
+    name = @lookupProp(name)
     @[name] = Utils.parseAttributeValue(new_val) if name of @props
 
   processSlots: (fragment) =>
@@ -116,7 +114,7 @@ module.exports = class BaseElement extends HTMLElement
   assignSlot: (slot) =>
     name = slot.getAttribute('name')
     name = '_default' unless name
-    if nodes = @__assignableNodes[name]
+    if (nodes = @__assignableNodes[name])?.length
       slot.removeChild(child) while child = slot.firstChild
       slot.appendChild(child) for child in nodes
       slot.setAttribute('assigned','')

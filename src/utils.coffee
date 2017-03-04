@@ -51,9 +51,14 @@ module.exports = class ComponentUtils
     return +parsed if /^[0-9]*$/.test(parsed)
     parsed
 
-  @reflect: (value) ->
-    return unless not ComponentUtils.isObject(value) and reflect = value?.toString?()
-    reflect
+  @reflect: (node, attribute, value) ->
+    node.__updating[attribute]
+    if not ComponentUtils.isObject(value) and reflect = value?.toString?()
+      reflect = '' if reflect is 'true'
+      node.setAttribute(attribute, reflect)
+    else node.removeAttribute(attribute)
+    # polyfill calls asyncronously so need to set a timeout
+    setTimeout (-> delete node.__updating[attribute]), 0
 
   @isObject: (obj) -> obj isnt null and typeof obj in ['object', 'function']
 

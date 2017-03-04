@@ -15,10 +15,7 @@ module.exports = class Component
     return if prop.value is val and not Array.isArray(val)
     old_value = prop.value
     prop.value = val
-    if reflected = Utils.reflect(val)
-      @__element.__updating[name] = true
-      @__element.setAttribute(prop.attribute, reflected)
-      delete  @__element.__updating[name]
+    Utils.reflect(@__element, prop.attribute, val)
     if prop.notify
       @trigger('propertychange', {value: val, old_value, name})
 
