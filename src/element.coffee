@@ -101,10 +101,10 @@ module.exports = class BaseElement extends HTMLElement
       @__assignableNodes[name].push(node)
 
     default_slot = []
-    default_slot.push(node) for node in fragment.childNodes when not node.hasAttribute('slot')
+    default_slot.push(node) for node in fragment.childNodes when not node.hasAttribute?('slot')
     @__assignableNodes['_default'] = default_slot
 
-  findSlots: (nodes) ->
+  findSlots: (nodes) =>
     slots = []
     for node in nodes
       switch node.nodeName
@@ -114,11 +114,10 @@ module.exports = class BaseElement extends HTMLElement
           slots.push.apply(slots, @findSlots(node.childNodes)) if node.childNodes.length
     return slots
 
-  assignSlot: (slot) ->
+  assignSlot: (slot) =>
     name = slot.getAttribute('name')
     name = '_default' unless name
-    nodes = @__assignableNodes[name]
-    if nodes.length
+    if nodes = @__assignableNodes[name]
       slot.removeChild(child) while child = slot.firstChild
       slot.appendChild(child) for child in nodes
       slot.setAttribute('assigned','')
@@ -149,6 +148,7 @@ module.exports = class BaseElement extends HTMLElement
       return script
 
   lookupProp: (attr_name) ->
+    return unless @props
     return unless props = @__component_type.props
     return k for k, v of props when attr_name in [k, v.attribute]
 

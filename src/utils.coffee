@@ -70,7 +70,7 @@ module.exports = class ComponentUtils
 
   @inComponent: (node, owner) ->
     null while (node = node.parentNode) and not (node.nodeName in ['SLOT', '_ROOT_']) and node isnt owner
-    node is owner or node.host is owner
+    node and owner in [node, node.host]
 
   @debounce: (wait, callback) ->
     timeout = undefined
