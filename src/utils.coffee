@@ -1,7 +1,6 @@
 div = document.createElement('div');
 shadowDOMV1 = !!div.attachShadow;
 customProperties = window.CSS and CSS.supports('color', 'var(--primary)')
-microtask = require 'microtask-queue'
 
 module.exports = class ComponentUtils
   @useShadowDOM: shadowDOMV1
@@ -89,4 +88,8 @@ module.exports = class ComponentUtils
       timeout = setTimeout(later, wait)
       return
 
-  @scheduleMicroTask: (callback) -> microtask.queue(callback)
+  @scheduleMicroTask: (callback) ->
+    div = document.createElement('div')
+    (observer = new MutationObserver(->observer.disconnect(); callback())).observe(div, attributes: true)
+    div.classList.toggle 'foo'
+    return
