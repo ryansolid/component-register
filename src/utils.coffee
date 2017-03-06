@@ -68,7 +68,7 @@ module.exports = class ComponentUtils
   @connectedToDOM: (node) ->
     return node.isConnected if 'isConnected' of node
     return true if document.body.contains(node)
-    return false unless Utils.useShadowDOM
+    return false unless ComponentUtils.useShadowDOM
     null while (node = node.parentNode or node.host) and node isnt document.documentElement
     node is document.documentElement
 
