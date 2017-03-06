@@ -32,7 +32,6 @@ module.exports = class BaseElement extends HTMLElement
       #disconnect childnodes
       fragment = document.createDocumentFragment()
       fragment.appendChild(node) while node = @firstChild
-      @processSlots(fragment)
     @childRoot.host or= @
 
     try
@@ -41,30 +40,22 @@ module.exports = class BaseElement extends HTMLElement
       console.error "Error creating component #{Utils.toComponentName(@__component_type.tag)}:", err
 
     @propertyChange = @__component.onPropertyChange
-    mounted_observer = new MutationObserver(Utils.debounce 10, =>
+    setTimeout =>
       return if @__released
-      mounted_observer.disconnect()
       @__component.onMounted?(@)
-    )
-    mounted_observer.observe(@childRoot, {childList: true, subtree: true})
-
-    # slot assignment for non-shadow dom
-    if !Utils.useShadowDOM and fragment.childNodes.length
-      slot_observer = new MutationObserver (mutations) =>
-        return if @__released
-        for mutation in mutations when mutation.addedNodes.length
-          continue unless Utils.inComponent(mutation.addedNodes[0], @)
-          slots = @findSlots(mutation.addedNodes)
-          @assignSlot(slot) for slot in slots
-      slot_observer.observe(@childRoot, {childList: true, subtree: true})
+    , 0
 
     script = @appendStyles()
     return unless template = @__component_type.template
     template = HTMLParse(template, script.id) if script and (not Utils.useShadowDOM or Utils.polyfillCSS)
-    nodes = @__component.renderTemplate(template, @__component)
-    @childRoot.appendChild(node) while node = nodes?.shift()
-    return if Utils.useShadowDOM
-    @appendChild(@childRoot)
+    if Utils.useShadowDOM
+      nodes = @__component.renderTemplate(template, @__component)
+      @shadowRoot.appendChild(node) while node = nodes?.shift()
+    else
+      @childRoot.innerHTML = template
+      @assignSlots(fragment)
+      @appendChild(@childRoot)
+    return
 
   connectedCallback: ->
     # check that infact it connected since polyfill sometimes double calls
@@ -92,34 +83,17 @@ module.exports = class BaseElement extends HTMLElement
       return if new_val is null and not @[name]
       @[name] = Utils.parseAttributeValue(new_val)
 
-  processSlots: (fragment) =>
-    @__assignableNodes = {}
-    for node in fragment.querySelectorAll("[slot]")
-      name = node.getAttribute('slot')
-      @__assignableNodes[name] or= []
-      @__assignableNodes[name].push(node)
-
-    default_slot = []
-    default_slot.push(node) for node in fragment.childNodes when not node.hasAttribute?('slot')
-    @__assignableNodes['_default'] = default_slot
-
-  findSlots: (nodes) =>
-    slots = []
-    for node in nodes
-      switch node.nodeName
-        when 'SLOT' then slots.push(node)
-        when '_ROOT_' then continue
-        else
-          slots.push.apply(slots, @findSlots(node.childNodes)) if node.childNodes.length
-    return slots
-
-  assignSlot: (slot) =>
-    name = slot.getAttribute('name')
-    name = '_default' unless name
-    if (nodes = @__assignableNodes[name])?.length
-      slot.removeChild(child) while child = slot.firstChild
-      slot.appendChild(child) for child in nodes
-      slot.setAttribute('assigned','')
+  assignSlots: (fragment) =>
+    slots = Array::slice.call(@childRoot.querySelectorAll('slot[name]'))
+    slots = slots.concat(Array::slice.call(@childRoot.querySelectorAll('slot:not([name])')))
+    for node in slots
+      nodes = fragment.childNodes
+      nodes = fragment.querySelectorAll("[slot='#{selector}']") if selector = node.getAttribute('name')
+      nodes = Array::slice.call(nodes)
+      if nodes.length
+        node.removeChild(child) while child = node.firstChild
+        node.appendChild(child) while child = nodes?.shift()
+        node.setAttribute('assigned','')
 
   appendStyles: =>
     if styles = @__component_type.styles

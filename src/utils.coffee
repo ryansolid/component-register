@@ -72,22 +72,6 @@ module.exports = class ComponentUtils
     null while (node = node.parentNode or node.host) and node isnt document.documentElement
     node is document.documentElement
 
-  @inComponent: (node, owner) ->
-    null while (node = node.parentNode) and not (node.nodeName in ['SLOT', '_ROOT_']) and node isnt owner
-    node and owner in [node, node.host]
-
-  @debounce: (wait, callback) ->
-    timeout = undefined
-    return ->
-      context = @
-      later = ->
-        timeout = null
-        callback.apply context, arguments
-        return
-      clearTimeout timeout
-      timeout = setTimeout(later, wait)
-      return
-
   @scheduleMicroTask: (callback) ->
     div = document.createElement('div')
     (observer = new MutationObserver(->observer.disconnect(); callback())).observe(div, attributes: true)
