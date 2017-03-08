@@ -5,7 +5,6 @@ customProperties = window.CSS and CSS.supports('color', 'var(--primary)')
 module.exports = class ComponentUtils
   @useShadowDOM: shadowDOMV1
   @polyfillCSS: !shadowDOMV1
-  @polyfillCustomProperties: !customProperties
   @excludeTags = []
 
   @normalizePropDefs: (props) ->

@@ -108,8 +108,7 @@ module.exports = class BaseElement extends HTMLElement
       scope += '-' + @__component_type.css_scope if @__component_type.css_scope
       unless script = document.head.querySelector("[scope='#{scope}']")
         @childRoot.cssIdentifier = identifier = "_co#{COUNTER++}"
-        host_identifier = attr.name for attr in @attributes when attr.name.indexOf('_co') is 0
-        parser = new Parser(new ComponentParser(@__component_type.tag, identifier, host_identifier))
+        parser = new Parser(new ComponentParser(@__component_type.tag, identifier))
         parsed = parser.parse(styles)
         styles = (new Stringifier()).stringify(parsed)
         script = document.createElement('style')
