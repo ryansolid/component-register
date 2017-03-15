@@ -72,6 +72,8 @@ module.exports = class ComponentUtils
     node is document.documentElement
 
   @scheduleMicroTask: (callback) ->
+    # use promises if available or fallback to MutationObserver
+    return Promise.resolve().then(callback) if window.Promise
     div = document.createElement('div')
     (observer = new MutationObserver(->observer.disconnect(); callback())).observe(div, attributes: true)
     div.classList.toggle 'foo'
