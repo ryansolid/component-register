@@ -71,10 +71,32 @@ module.exports = class ComponentUtils
     null while (node = node.parentNode or node.host) and node isnt document.documentElement
     node is document.documentElement
 
-  @scheduleMicroTask: (callback) ->
+  @scheduleMicroTask: do ->
     # use promises if available or fallback to MutationObserver
-    return Promise.resolve().then(callback) if window.Promise
+    if (window.Promise)
+      return (callback) -> Promise.resolve().then(callback)
+
+    # Using 2 mutation observers to batch multiple updates into one.
     div = document.createElement('div')
-    (observer = new MutationObserver(->observer.disconnect(); callback())).observe(div, attributes: true)
-    div.classList.toggle 'foo'
-    return
+    options = {attributes: true}
+    toggle_scheduled = false
+    div2 = document.createElement('div')
+    o2 = new MutationObserver ->
+      div.classList.toggle('foo')
+      toggle_scheduled = false
+      return
+    o2.observe(div2, options)
+
+    scheduleToggle = ->
+      return if toggle_scheduled
+      toggle_scheduled = true
+      div2.classList.toggle('foo')
+      return
+
+    (callback) ->
+      o = new MutationObserver ->
+        o.disconnect()
+        callback()
+        return
+      o.observe(div, options)
+      scheduleToggle()
