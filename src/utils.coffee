@@ -72,10 +72,6 @@ module.exports = class ComponentUtils
     node is document.documentElement
 
   @scheduleMicroTask: do ->
-    # use promises if available or fallback to MutationObserver
-    if (window.Promise)
-      return (callback) -> Promise.resolve().then(callback)
-
     # Using 2 mutation observers to batch multiple updates into one.
     div = document.createElement('div')
     options = {attributes: true}
