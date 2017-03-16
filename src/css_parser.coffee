@@ -4,7 +4,7 @@ Utils = require './utils'
 SLOTTED = /(?:::slotted)(?:\(((?:\([^)(]*\)|[^)(]*)+?)\))/
 HOST = /(:host)(?:\(((?:\([^)(]*\)|[^)(]*)+?)\))/
 HOSTCONTEXT = /(:host-context)(?:\(((?:\([^)(]*\)|[^)(]*)+?)\))/
-ATTR_MATCHER = /[\[\(].+[\]\)]|:[a-zA-Z0-9_\-]+|([.#]?[a-zA-Z0-9_\-\*]+)/g
+ATTR_MATCHER = /[\[\(][^)\]]+[\]\)]|:[a-zA-Z0-9_\-]+|([.#]?[a-zA-Z0-9_\-\*]+)/g
 
 # used to approximate shadow dom css encapsulation
 module.exports = class ComponentParser extends NodeFactory
