@@ -1,6 +1,7 @@
 Utils = require './utils'
 ComponentParser = require './css_parser'
 HTMLParse = require './html_parser'
+Registry = require './registry'
 {Parser, Stringifier} = require 'shady-css-parser'
 COUNTER = 0
 
@@ -52,6 +53,7 @@ module.exports = class BaseElement extends HTMLElement
       nodes = @__component.renderTemplate(template, @__component)
       @shadowRoot.appendChild(node) while node = nodes?.shift()
     else
+      @removeAttribute('_binding')
       @childRoot.innerHTML = template
       @assignSlots(fragment)
       @markDefered(@childRoot)
@@ -60,7 +62,7 @@ module.exports = class BaseElement extends HTMLElement
 
   connectedCallback: ->
     # check that infact it connected since polyfill sometimes double calls
-    if Utils.connectedToDOM(@) and not this.__component and not this.__defer_binding
+    if Utils.connectedToDOM(@) and not this.__component and not this.hasAttribute('_binding')
       @__component_type?::bindDom(@, @context or {})
       delete @context
 
@@ -121,8 +123,7 @@ module.exports = class BaseElement extends HTMLElement
       return script
 
   markDefered: (node) =>
-    # polyfilled elements aren't upgraded yet must mark every reasonable element
-    node.__defer_binding = true if node.nodeType is 1
+    node.setAttribute('_binding', '') if Registry[Utils.toComponentName(node?.tagName)]
     @markDefered(node) for node in node.childNodes
     return
 
