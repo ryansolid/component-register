@@ -2,20 +2,19 @@ Utils = require './utils'
 
 module.exports = class Component
   element_type: require './element'
-  constructor: (element, props) ->
-    @__element = element
+  constructor: (@element, props) ->
     @__release_callbacks = []
 
   bindDom: (node, context) ->
   unbindDom: (node) ->
 
   setProperty: (name, val) =>
-    return unless name of @__element.props
-    prop = @__element.props[name]
+    return unless name of @element.props
+    prop = @element.props[name]
     return if prop.value is val and not Array.isArray(val)
     old_value = prop.value
     prop.value = val
-    Utils.reflect(@__element, prop.attribute, val)
+    Utils.reflect(@element, prop.attribute, val)
     if prop.notify
       @trigger('propertychange', {value: val, old_value, name})
 
@@ -26,7 +25,7 @@ module.exports = class Component
     return if @__released
     @__released = true
     callback(@) while callback = @__release_callbacks.pop()
-    delete @__element
+    delete @element
 
   wasReleased: => !!@__released
 
@@ -71,16 +70,16 @@ module.exports = class Component
     return timer
 
   trigger: (name, data) =>
-    event = @__element.createEvent(name, {detail: data, bubbles: true, cancelable: true})
+    event = @element.createEvent(name, {detail: data, bubbles: true, cancelable: true})
     not_cancelled = true
-    not_cancelled = !!@__element['on'+name]?(event) if @__element['on'+name]
-    not_cancelled and !!@__element.dispatchEvent(event)
+    not_cancelled = !!@element['on'+name]?(event) if @element['on'+name]
+    not_cancelled and !!@element.dispatchEvent(event)
 
   on: (name, handler) =>
-    @__element.addEventListener(name, handler)
-    @addReleaseCallback => @__element.removeEventListener(name, handler)
+    @element.addEventListener(name, handler)
+    @addReleaseCallback => @element.removeEventListener(name, handler)
 
-  off: (name, handler) => @__element.removeEventListener(arguments...)
+  off: (name, handler) => @element.removeEventListener(arguments...)
 
   listenTo: (emitter, key, fn) =>
     emitter.on key, fn
