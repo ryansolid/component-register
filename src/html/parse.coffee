@@ -3,7 +3,7 @@
 ###
 
 tagRE = /(?:<!--[\S\s]*?-->|<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>)/g
-attrRE = /([\w-]+)|(['"])(.*?)\2/g
+attrRE = /([^\t\n\f \/>"'=]+)|(['"])(.*?)\2/g
 lookup =
   area: true, base: true
   br: true, col: true
