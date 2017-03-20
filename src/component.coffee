@@ -80,6 +80,8 @@ module.exports = class Component
     @__element.addEventListener(name, handler)
     @addReleaseCallback => @__element.removeEventListener(name, handler)
 
+  off: (name, handler) => @__element.removeEventListener(arguments...)
+
   listenTo: (emitter, key, fn) =>
     emitter.on key, fn
     @addReleaseCallback => emitter.off key, fn

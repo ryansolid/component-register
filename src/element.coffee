@@ -54,12 +54,13 @@ module.exports = class BaseElement extends HTMLElement
     else
       @childRoot.innerHTML = template
       @assignSlots(fragment)
+      @markDefered(@childRoot)
       @appendChild(@childRoot)
     return
 
   connectedCallback: ->
     # check that infact it connected since polyfill sometimes double calls
-    if Utils.connectedToDOM(@)
+    if Utils.connectedToDOM(@) and not this.__component and not this.__defer_binding
       @__component_type?::bindDom(@, @context or {})
       delete @context
 
@@ -118,6 +119,12 @@ module.exports = class BaseElement extends HTMLElement
         script.textContent = styles
         document.head.appendChild(script)
       return script
+
+  markDefered: (node) =>
+    # polyfilled elements aren't upgraded yet must mark every reasonable element
+    node.__defer_binding = true if node.nodeType is 1
+    @markDefered(node) for node in node.childNodes
+    return
 
   lookupProp: (attr_name) ->
     return unless props = @__component_type.props

@@ -22,7 +22,7 @@ module.exports =
     customElements.define(component.tag, element)
     component
 
-  create: (tag, options) ->
+  create: (tag, options={}) ->
     element = document.createElement(tag)
     if options.attributes
       for k, v of options.attributes
