@@ -15,12 +15,16 @@ module.exports = class BaseElement extends HTMLElement
     @__updating = {}
     for key, prop of @props then do (key, prop) =>
       @props[key].value = Utils.parseAttributeValue(attr) if (attr = @getAttribute(prop.attribute))?
-      @props[key].value = value if (value = @[key])?
+      if (value = @[key])?
+        @props[key].value = if Array.isArray(value) then value[..] else value
       Utils.reflect(@, prop.attribute, @props[key].value)
       Object.defineProperty @, key, {
         get: ->  @props[key].value
         set: (val) ->
-          @props[key].value = val
+          return if Utils.isEqual(val, @props[key].value)
+          if Array.isArray(val)
+            @props[key].value = val[..]
+          else @props[key].value = val
           Utils.reflect(@, prop.attribute, @props[key].value)
           @propertyChange?(key, val)
       }

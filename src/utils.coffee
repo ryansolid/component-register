@@ -29,11 +29,23 @@ module.exports = class ComponentUtils
     values[k] = prop.value for k, prop of props
     values
 
-  # shallow diff and order matters
-  @arrayDiff: (array1, array2) ->
-    return true unless array1.length is array2.length
-    return true for item, i in array1 when item isnt array2[i]
-    false
+  # deepEqual
+  @isEqual: (x, y, xStack=[], yStack=[]) ->
+    keys = Object.keys; tx = typeof x; ty = typeof y
+    if x and y and tx is 'object' and tx is ty
+      # handle circular dependencies
+      length = xStack.length;
+      while length--
+        return yStack[length] is y if xStack[length] is x
+      xStack.push(x)
+      yStack.push(y)
+
+      equal = keys(x).length is keys(y).length and keys(x).every (key) ->
+        ComponentUtils.isEqual(x[key], y[key], xStack, yStack)
+      xStack.pop()
+      yStack.pop()
+      return equal
+    x is y
 
   @toAttribute: (prop_name) -> prop_name.replace(/_/g, '-').toLowerCase()
   @toProperty: (prop_name) -> prop_name.replace(/-/g, '_')
