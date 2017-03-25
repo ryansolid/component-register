@@ -31,6 +31,7 @@ module.exports = class ComponentUtils
 
   # deepEqual
   @isEqual: (x, y, xStack=[], yStack=[]) ->
+    return true if x is y
     keys = Object.keys; tx = typeof x; ty = typeof y
     if x and y and tx is 'object' and tx is ty
       # handle circular dependencies
@@ -39,7 +40,6 @@ module.exports = class ComponentUtils
         return yStack[length] is y if xStack[length] is x
       xStack.push(x)
       yStack.push(y)
-
       equal = keys(x).length is keys(y).length and keys(x).every (key) ->
         ComponentUtils.isEqual(x[key], y[key], xStack, yStack)
       xStack.pop()

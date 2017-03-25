@@ -66,9 +66,10 @@ module.exports = class BaseElement extends HTMLElement
 
   connectedCallback: ->
     # check that infact it connected since polyfill sometimes double calls
-    if Utils.connectedToDOM(@) and not this.__component and not this.hasAttribute('_binding')
-      @__component_type?::bindDom(@, @context or {})
-      delete @context
+    if Utils.connectedToDOM(@) and not @__component and not @hasAttribute('_binding')
+      Utils.scheduleMicroTask =>
+        @__component_type?::bindDom(@, @context or {}) unless @__component
+        delete @context
 
   disconnectedCallback: ->
     if Utils.useShadowDOM
