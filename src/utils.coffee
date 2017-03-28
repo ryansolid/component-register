@@ -63,7 +63,8 @@ module.exports = class ComponentUtils
     parsed
 
   @reflect: (node, attribute, value) ->
-    if not ComponentUtils.isObject(value) and (reflect = value?.toString?()) and reflect isnt 'false'
+    return if ComponentUtils.isObject(value)
+    if (reflect = value?.toString?()) and reflect isnt 'false'
       node.__updating[attribute] = true
       reflect = '' if reflect is 'true'
       node.setAttribute(attribute, reflect)
