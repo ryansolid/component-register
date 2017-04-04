@@ -72,16 +72,18 @@ module.exports = class BaseElement extends HTMLElement
         delete @context
 
   disconnectedCallback: ->
-    if Utils.useShadowDOM
-      while node = @shadowRoot?.firstChild
-        @__component?.unbindDom(node)
-        @shadowRoot.removeChild(node)
-    if @__component
-      @__component?.onRelease?(@)
-      delete @__component
-      @__released = true
-    delete @childRoot
-    delete @__assignableNodes
+    # prevent premature releasing when element is only temporarely removed from DOM
+    Utils.scheduleMicroTask =>
+      return if Utils.connectedToDOM(@)
+      if Utils.useShadowDOM
+        while node = @shadowRoot?.firstChild
+          @__component?.unbindDom(node)
+          @shadowRoot.removeChild(node)
+      if @__component
+        @__component?.onRelease?(@)
+        delete @__component
+        @__released = true
+      delete @childRoot
 
   attributeChangedCallback: (name, old_val, new_val) ->
     return unless @props
