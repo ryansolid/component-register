@@ -79,8 +79,9 @@ module.exports = class BaseElement extends HTMLElement
         while node = @shadowRoot?.firstChild
           @__component?.unbindDom(node)
           @shadowRoot.removeChild(node)
+      @__component_type?::unbindDom(@)
       if @__component
-        @__component?.onRelease?(@)
+        @__component.onRelease?(@)
         delete @__component
         @__released = true
       delete @childRoot
