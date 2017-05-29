@@ -97,6 +97,13 @@ module.exports = class BaseElement extends HTMLElement
   assignSlots: (fragment) =>
     slots = Array::slice.call(@childRoot.querySelectorAll('slot[name]'))
     slots = slots.concat(Array::slice.call(@childRoot.querySelectorAll('slot:not([name])')))
+    @querySelectorAll = (args...) ->
+      results = slots.reduce (list, slot) ->
+        list.concat(Array::slice.call(slot.querySelectorAll(args...)))
+      , []
+      results.concat(Array::slice.call(fragment.querySelectorAll(args...)))
+    @querySelector = => @querySelectorAll(arguments...)?[0]
+
     for node in slots
       nodes = fragment.childNodes
       nodes = fragment.querySelectorAll("[slot='#{selector}']") if selector = node.getAttribute('name')
@@ -105,6 +112,7 @@ module.exports = class BaseElement extends HTMLElement
         node.removeChild(child) while child = node.firstChild
         node.appendChild(child) while child = nodes?.shift()
         node.setAttribute('assigned','')
+    return
 
   appendStyles: =>
     if styles = @__component_type.styles
