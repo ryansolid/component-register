@@ -18,9 +18,9 @@ module.exports = class ComponentParser extends NodeFactory
       part = part.replace(ATTR_MATCHER, (m, c) =>
         return m unless c
         c + "[#{@identifier}]")
+      if part.indexOf('::slotted') isnt -1
+        part = part.replace SLOTTED, (m, expr) => 'slot > ' + expr
       parts[i] = switch
-        when part.indexOf('::slotted') isnt -1
-          part.replace SLOTTED, (m, expr) => @tag_name + ' slot > ' + expr
         when part.indexOf(':host-context') isnt -1
           part.replace(HOSTCONTEXT, (m, c, expr) => "#{@tag_name}#{expr}") +
             part.replace(HOSTCONTEXT, (m, c, expr) => ", #{expr} #{@tag_name}")
