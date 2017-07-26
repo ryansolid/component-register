@@ -1,7 +1,7 @@
 {
   "name": "component-register",
   "description": "Basic Wrapper around Web Components",
-  "version": "0.2.18",
+  "version": "0.2.19",
   "author": "Ryan Carniato",
   "license": "MIT",
   "readmeFilename": "README.md",
@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "document-register-element": "*",
-    "es6-symbol": "*",
-    "shady-css-parser": "*"
+    "es6-symbol": "3.x",
+    "shady-css-parser": "0.0.x"
   },
   "devDependencies": {
     "coffee-script": "*"
