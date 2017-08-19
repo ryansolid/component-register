@@ -1,12 +1,8 @@
-Element = require './element'
-Registry = require './registry'
+Element = require './base'
+Registry = require '../registry'
 TAG = 'component-element'
 
 class ComponentElement extends Element
-  constructor: ->
-    # Safari 9 fix
-    return Element.apply(@, arguments)
-
   boundCallback: =>
     @__component_type or= @component
     delete @component

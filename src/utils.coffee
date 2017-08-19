@@ -1,9 +1,7 @@
 div = document.createElement('div');
 shadowDOMV1 = !!div.attachShadow;
-customProperties = window.CSS and CSS.supports('color', 'var(--primary)')
 
 module.exports = class ComponentUtils
-  @useShadowDOM: shadowDOMV1
   @polyfillCSS: !shadowDOMV1
   @excludeTags = []
 
@@ -80,7 +78,6 @@ module.exports = class ComponentUtils
   @connectedToDOM: (node) ->
     return node.isConnected if 'isConnected' of node
     return true if document.body.contains(node)
-    return false unless ComponentUtils.useShadowDOM
     null while (node = node.parentNode or node.host) and node isnt document.documentElement
     node is document.documentElement
 

@@ -1,12 +1,9 @@
 Utils = require './utils'
 
 module.exports = class Component
-  element_type: require './element'
+  element_type: require './elements/base'
   constructor: (@element, props) ->
     @__release_callbacks = []
-
-  bindDom: (node, context) ->
-  unbindDom: (node) ->
 
   setProperty: (name, val) =>
     return unless name of @element.props
@@ -20,8 +17,8 @@ module.exports = class Component
 
   onPropertyChange: (name, val) ->
   onMounted: ->
-
-  onRelease: =>
+  onRender: ->
+  onRelease: ->
     return if @__released
     @__released = true
     callback(@) while callback = @__release_callbacks.pop()
@@ -30,12 +27,6 @@ module.exports = class Component
   wasReleased: => !!@__released
 
   addReleaseCallback: (fn) => @__release_callbacks.push(fn)
-
-  renderTemplate: (template, context={}) =>
-    el = document.createElement('div')
-    el.innerHTML = template
-    @bindDom(el, context)
-    Array::slice.call(el.childNodes)
 
   ###
   # used by component-element to inject custom template/styles

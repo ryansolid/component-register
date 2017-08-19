@@ -5,7 +5,8 @@ require './component_element'
 Utils = require './utils'
 
 module.exports =
-  Element: require './element'
+  Element: require './elements/base'
+  BoundElement: require './elements/bound'
   Component: require './component'
   Registry: registry = require './registry'
   Utils: Utils

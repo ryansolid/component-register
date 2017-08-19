@@ -1,5 +1,5 @@
-parse = require './html/parse'
-stringify = require './html/stringify'
+parse = require '../html/parse'
+stringify = require '../html/stringify'
 
 transformList = (nodes, identifier) ->
   for node in nodes when node.type is 'tag'
