@@ -5,7 +5,7 @@ module.exports = class Component
   constructor: (@element, props) ->
     @__release_callbacks = []
 
-  setProperty: (name, val) =>
+  setProperty: (name, val) ->
     return unless name of @element.props
     prop = @element.props[name]
     return if prop.value is val and not Array.isArray(val)
@@ -15,63 +15,54 @@ module.exports = class Component
     if prop.notify
       @trigger('propertychange', {value: val, old_value, name})
 
-  onPropertyChange: (name, val) ->
-  onMounted: ->
   onRender: ->
+  onMounted: ->
+  onPropertyChange: (name, val) ->
   onRelease: ->
     return if @__released
     @__released = true
     callback(@) while callback = @__release_callbacks.pop()
     delete @element
 
-  wasReleased: => !!@__released
+  wasReleased: -> !!@__released
 
-  addReleaseCallback: (fn) => @__release_callbacks.push(fn)
+  addReleaseCallback: (fn) -> @__release_callbacks.push(fn)
 
   ###
   # used by component-element to inject custom template/styles
   ###
-  createComponent: (options) =>
-    comp = @
-    class CustomComponent extends Component
-      @tag: 'component-element', @css_scope: options.css_scope
+  createComponent: (initFn, ComponentBase=Component) ->
+    class CustomComponent extends ComponentBase
       constructor: ->
         super
-        Object.assign(@, options.context) if options.context
-      bindDom: comp.bindDom
-      unbindDom: comp.unbindDom
+        initFn.call(@, arguments...)
 
-    CustomComponent.template = options.template if options.template
-    CustomComponent.styles = options.styles if options.styles
-    return CustomComponent
-
-    ###############
+  ###############
   # Integration Methods
   # Here to make sure asyncronous operations only last the lifetime of the component
-
-  delay: (delay_time, callback) =>
+  delay: (delay_time, callback) ->
     [delay_time, callback] = [0, delay_time] if Utils.isFunction(delay_time)
     timer = setTimeout callback, delay_time
     @addReleaseCallback -> clearTimeout(timer)
     return timer
 
-  interval: (delay_time, callback) =>
+  interval: (delay_time, callback) ->
     timer = setInterval callback, delay_time
     @addReleaseCallback -> clearInterval(timer)
     return timer
 
-  trigger: (name, data) =>
-    event = @element.createEvent(name, {detail: data, bubbles: true, cancelable: true})
+  trigger: (name, detail) ->
+    event = new CustomEvent(name, {detail, bubbles: true, cancelable: true})
     not_cancelled = true
     not_cancelled = !!@element['on'+name]?(event) if @element['on'+name]
     not_cancelled and !!@element.dispatchEvent(event)
 
-  on: (name, handler) =>
+  on: (name, handler) ->
     @element.addEventListener(name, handler)
     @addReleaseCallback => @element.removeEventListener(name, handler)
 
-  off: (name, handler) => @element.removeEventListener(arguments...)
+  off: (name, handler) -> @element.removeEventListener(arguments...)
 
-  listenTo: (emitter, key, fn) =>
+  listenTo: (emitter, key, fn) ->
     emitter.on key, fn
     @addReleaseCallback => emitter.off key, fn

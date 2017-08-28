@@ -3,12 +3,7 @@ Registry = require '../registry'
 TAG = 'component-element'
 
 class ComponentElement extends Element
-  boundCallback: =>
-    @__component_type or= @component
-    delete @component
-    super
-
-  connectedCallback: =>
+  connectedCallback: ->
     @__component_type or= @component
     delete @component
     super

@@ -1,12 +1,11 @@
 # polyfills
 require './shims'
 require 'document-register-element'
-require './component_element'
+require './elements/component_element'
 Utils = require './utils'
 
 module.exports =
   Element: require './elements/base'
-  BoundElement: require './elements/bound'
   Component: require './component'
   Registry: registry = require './registry'
   Utils: Utils
@@ -22,19 +21,3 @@ module.exports =
     registry.register(component)
     customElements.define(component.tag, element)
     component
-
-  create: (tag, options={}) ->
-    element = document.createElement(tag)
-    if options.attributes
-      for k, v of options.attributes
-        v = JSON.stringify(v) unless Utils.isString(v)
-        element.setAttribute(k, v)
-    if options.properties
-      element[k] = v for k, v of options.properties
-    if options.events
-      element.addEventListener(k, v) for k, v of options.events
-    if options.template
-      element.innerHTML = options.template
-    if options.context
-      element.context = options.context
-    return element

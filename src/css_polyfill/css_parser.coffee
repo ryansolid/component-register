@@ -19,7 +19,7 @@ class ComponentParser extends NodeFactory
         return m unless c
         c + "[#{@identifier}]")
       if part.indexOf('::slotted') isnt -1
-        part = part.replace SLOTTED, (m, expr) => 'slot > ' + expr
+        part = part.replace SLOTTED, (m, expr) => "[#{@identifier}] > " + expr
       parts[i] = switch
         when part.indexOf(':host-context') isnt -1
           part.replace(HOSTCONTEXT, (m, c, expr) => "#{@tag_name}#{expr}") +

@@ -2,19 +2,19 @@ Utils = require '../utils'
 CSSPolyfill = require '../css_polyfill'
 COUNTER = 0
 
-module.exports = class BaseElement extends HTMLELement
+module.exports = class BaseElement extends HTMLElement
   connectedCallback: ->
     # check that infact it connected since polyfill sometimes double calls
     return unless Utils.connectedToDOM(@) and not @__component
     @_initializeProps()
     @attachShadow({ mode: 'open' })
-    @_appendStyles()
     try
       @__component = new @__component_type(@, Utils.propValues(@props))
     catch err
       console.error "Error creating component #{Utils.toComponentName(@__component_type.tag)}:", err
 
     @propertyChange = @__component.onPropertyChange
+    @_appendStyles()
     @__component.onRender?(@)
     @__component.onMounted?(@)
 
@@ -22,7 +22,6 @@ module.exports = class BaseElement extends HTMLELement
      # prevent premature releasing when element is only temporarely removed from DOM
     Utils.scheduleMicroTask =>
       return if Utils.connectedToDOM(@)
-      # @shadowRoot.removeChild(node) while node = @shadowRoot?.firstChild
       if @__component
         @__component.onRelease?(@)
         delete @__component
@@ -39,11 +38,6 @@ module.exports = class BaseElement extends HTMLELement
   lookupProp: (attr_name) ->
     return unless props = @__component_type.props
     return k for k, v of props when attr_name in [k, v.attribute]
-
-  createEvent: (name, params) ->
-    event = document.createEvent('CustomEvent')
-    event.initCustomEvent(name, params.bubbles, params.cancelable, params.detail)
-    return event
 
   _initializeProps: ->
     @props = Utils.cloneProps(@__component_type.props)
@@ -77,11 +71,12 @@ module.exports = class BaseElement extends HTMLELement
       scope += '-' + @__component_type.css_scope if @__component_type.css_scope
       unless script = document.head.querySelector("[scope='#{scope}']")
         @__component.css_id = "_co#{COUNTER++}"
-        styles = CSSPolyfill.css(@__component_type,  @__component.css_id, styles)
+        styles = CSSPolyfill.css(@__component_type, @__component.css_id, styles)
         script = document.createElement('style')
         script.setAttribute('type', 'text/css')
         script.setAttribute('scope', scope)
         script.id = @__component.css_id
         script.textContent = styles
         document.head.appendChild(script)
+      else @__component.css_id = script.id
       return
