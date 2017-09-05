@@ -28,15 +28,6 @@ module.exports = class Component
 
   addReleaseCallback: (fn) -> @__release_callbacks.push(fn)
 
-  ###
-  # used by component-element to inject custom template/styles
-  ###
-  createComponent: (initFn, ComponentBase=Component) ->
-    class CustomComponent extends ComponentBase
-      constructor: ->
-        super
-        initFn.call(@, arguments...)
-
   ###############
   # Integration Methods
   # Here to make sure asyncronous operations only last the lifetime of the component

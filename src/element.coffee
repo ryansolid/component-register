@@ -1,5 +1,5 @@
-Utils = require '../utils'
-CSSPolyfill = require '../css_polyfill'
+Utils = require './utils'
+CSSPolyfill = require './css_polyfill'
 COUNTER = 0
 
 module.exports = class BaseElement extends HTMLElement
@@ -68,7 +68,6 @@ module.exports = class BaseElement extends HTMLElement
         return
       # append globally otherwise
       scope = @__component_type.tag
-      scope += '-' + @__component_type.css_scope if @__component_type.css_scope
       unless script = document.head.querySelector("[scope='#{scope}']")
         @__component.css_id = "_co#{COUNTER++}"
         styles = CSSPolyfill.css(@__component_type, @__component.css_id, styles)

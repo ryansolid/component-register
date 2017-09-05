@@ -3,7 +3,6 @@ shadowDOMV1 = !!div.attachShadow;
 
 module.exports = class ComponentUtils
   @polyfillCSS: !shadowDOMV1
-  @excludeTags = []
 
   @normalizePropDefs: (props) ->
     return unless props

@@ -6,7 +6,7 @@ transformList = (nodes, identifier) ->
     switch node.type
       when 'tag'
         node.attrs[identifier] = ''
-        transformList(node.children, identifier) if node.children?.length and not (node.name in ['textarea'])
+        transformList(node.children, identifier) if node.children?.length and not (node.name in ['textarea', 'template'])
   return
 
 module.exports = (text, identifier) ->
