@@ -1,6 +1,4 @@
 {NodeFactory, Parser, Stringifier} = require 'shady-css-parser'
-Registry = require '../registry'
-Utils = require '../utils'
 SLOTTED = /(?:::slotted)(?:\(((?:\([^)(]*\)|[^)(]*)+?)\))/
 HOST = /(:host)(?:\(((?:\([^)(]*\)|[^)(]*)+?)\))/
 HOSTCONTEXT = /(:host-context)(?:\(((?:\([^)(]*\)|[^)(]*)+?)\))/
