@@ -2,6 +2,7 @@ Utils = require './utils'
 
 module.exports = class Component
   element_type: require './element'
+  scope_css: true
   constructor: (@element, props) ->
     @__release_callbacks = []
 

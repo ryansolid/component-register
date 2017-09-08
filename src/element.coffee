@@ -70,7 +70,7 @@ module.exports = class BaseElement extends HTMLElement
       scope = @__component_type.tag
       unless script = document.head.querySelector("[scope='#{scope}']")
         @__component.css_id = "_co#{COUNTER++}"
-        styles = CSSPolyfill.css(@__component_type, @__component.css_id, styles)
+        styles = CSSPolyfill.css(@__component_type, styles, if @__component_type::scope_css then @__component.css_id else undefined)
         script = document.createElement('style')
         script.setAttribute('type', 'text/css')
         script.setAttribute('scope', scope)

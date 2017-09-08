@@ -13,11 +13,13 @@ class ComponentParser extends NodeFactory
 
     # replace shadow dom selectors
     for part, i in parts when part.indexOf('%') is -1 and not (part.trim() in ['to', 'from'])
-      part = part.replace(ATTR_MATCHER, (m, c) =>
-        return m unless c
-        c + "[#{@identifier}]")
+      if @identifier
+        part = part.replace(ATTR_MATCHER, (m, c) =>
+          return m unless c
+          c + "[#{@identifier}]")
       if part.indexOf('::slotted') isnt -1
-        part = part.replace SLOTTED, (m, expr) => "[#{@identifier}] > " + expr
+        part = part.replace SLOTTED, (m, expr) => " > #{expr}"
+        part += ":not([#{@identifier}])" if @identifier
       parts[i] = switch
         when part.indexOf(':host-context') isnt -1
           part.replace(HOSTCONTEXT, (m, c, expr) => "#{@tag_name}#{expr}") +
@@ -28,7 +30,7 @@ class ComponentParser extends NodeFactory
     selector = parts.join(',')
     super(selector, rulelist)
 
-module.exports = (component_type, identifier, styles) ->
+module.exports = (component_type, styles, identifier) ->
   parser = new Parser(new ComponentParser(component_type.tag, identifier))
   parsed = parser.parse(styles)
   return (new Stringifier()).stringify(parsed)
