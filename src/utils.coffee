@@ -29,6 +29,12 @@ module.exports = class ComponentUtils
   # deepEqual
   @isEqual: (x, y, xStack=[], yStack=[]) ->
     return true if x is y
+
+    dateA = a instanceof Date
+    dateB = b instanceof Date
+    return a.getTime() is b.getTime() if dateA and dateB
+    return false if dateA != dateB
+
     keys = Object.keys; tx = typeof x; ty = typeof y
     if x and y and tx is 'object' and tx is ty
       # handle circular dependencies

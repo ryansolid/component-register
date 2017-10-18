@@ -30,7 +30,7 @@ class ComponentParser extends NodeFactory
     selector = parts.join(',')
     super(selector, rulelist)
 
-module.exports = (component_type, styles, identifier) ->
-  parser = new Parser(new ComponentParser(component_type.tag, identifier))
+module.exports = (scope, styles, identifier) ->
+  parser = new Parser(new ComponentParser(scope, identifier))
   parsed = parser.parse(styles)
   return (new Stringifier()).stringify(parsed)

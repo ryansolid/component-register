@@ -5,6 +5,7 @@ module.exports = class Component
   scope_css: true
   constructor: (@element, props) ->
     @__release_callbacks = []
+    @display_name = Utils.toComponentName(@constructor.tag)
 
   setProperty: (name, val) ->
     return unless name of @element.props
@@ -43,17 +44,18 @@ module.exports = class Component
     @addReleaseCallback -> clearInterval(timer)
     return timer
 
-  trigger: (name, detail) ->
-    event = new CustomEvent(name, {detail, bubbles: true, cancelable: true})
+  trigger: (name, detail, options={}) ->
+    event = new CustomEvent(name, Object.assign({detail, bubbles: true, cancelable: true}, options))
     not_cancelled = true
     not_cancelled = !!@element['on'+name]?(event) if @element['on'+name]
     not_cancelled and !!@element.dispatchEvent(event)
 
+  # handles child events for delegation
   on: (name, handler) ->
-    @element.addEventListener(name, handler)
-    @addReleaseCallback => @element.removeEventListener(name, handler)
+    @element.shadowRoot.addEventListener(name, handler)
+    @addReleaseCallback => @element.shadowRoot.removeEventListener(name, handler)
 
-  off: (name, handler) -> @element.removeEventListener(arguments...)
+  off: (name, handler) -> @element.shadowRoot.removeEventListener(arguments...)
 
   listenTo: (emitter, key, fn) ->
     emitter.on key, fn
