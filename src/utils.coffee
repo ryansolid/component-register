@@ -30,9 +30,9 @@ module.exports = class ComponentUtils
   @isEqual: (x, y, xStack=[], yStack=[]) ->
     return true if x is y
 
-    dateA = a instanceof Date
-    dateB = b instanceof Date
-    return a.getTime() is b.getTime() if dateA and dateB
+    dateA = x instanceof Date
+    dateB = y instanceof Date
+    return x.getTime() is y.getTime() if dateA and dateB
     return false if dateA != dateB
 
     keys = Object.keys; tx = typeof x; ty = typeof y
