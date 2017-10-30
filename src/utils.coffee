@@ -14,12 +14,12 @@ module.exports = class ComponentUtils
     return
 
   @cloneProps: (props) ->
-    new_props = {}
+    newProps = {}
     for k, prop of props
-      new_props[k] = Object.assign({}, prop)
-      new_props[k].value = Object.assign({}, prop.value) if ComponentUtils.isObject(prop.value) and not ComponentUtils.isFunction(prop.value) and not Array.isArray(prop.value)
-      new_props[k].value = prop.value[..] if Array.isArray(prop.value)
-    new_props
+      newProps[k] = Object.assign({}, prop)
+      newProps[k].value = Object.assign({}, prop.value) if ComponentUtils.isObject(prop.value) and not ComponentUtils.isFunction(prop.value) and not Array.isArray(prop.value)
+      newProps[k].value = prop.value[..] if Array.isArray(prop.value)
+    newProps
 
   @propValues: (props) ->
     values = {}
@@ -50,10 +50,9 @@ module.exports = class ComponentUtils
       return equal
     x is y
 
-  @toAttribute: (prop_name) -> prop_name.replace(/_/g, '-').toLowerCase()
-  @toProperty: (prop_name) -> prop_name.replace(/-/g, '_')
+  @toAttribute: (propName) -> propName.replace(/\.?([A-Z]+)/g, (x,y) ->  "-" + y.toLowerCase()).replace(/^-/, "")
+  @toProperty: (attr) -> attr?.toLowerCase().replace(/(-)([a-z])/g, (test) -> test.toUpperCase().replace('-',''))
   @toComponentName: (tag) -> tag?.toLowerCase().replace(/(^|-)([a-z])/g, (test) -> test.toUpperCase().replace('-',''))
-  @toTagName: (component_name) -> component_name.replace(/\.?([A-Z]+)/g, (x,y) ->  "-" + y.toLowerCase()).replace(/^-/, "")
 
   @parseAttributeValue: (value) ->
     return unless value
@@ -90,17 +89,17 @@ module.exports = class ComponentUtils
     # Using 2 mutation observers to batch multiple updates into one.
     div = document.createElement('div')
     options = {attributes: true}
-    toggle_scheduled = false
+    toggleScheduled = false
     div2 = document.createElement('div')
     o2 = new MutationObserver ->
       div.classList.toggle('foo')
-      toggle_scheduled = false
+      toggleScheduled = false
       return
     o2.observe(div2, options)
 
     scheduleToggle = ->
-      return if toggle_scheduled
-      toggle_scheduled = true
+      return if toggleScheduled
+      toggleScheduled = true
       div2.classList.toggle('foo')
       return
 

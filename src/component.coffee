@@ -1,21 +1,21 @@
 Utils = require './utils'
 
 module.exports = class Component
-  element_type: require './element'
-  scope_css: true
+  ElementType: require './element'
+  scopeCSS: true
   constructor: (@element, props) ->
-    @__release_callbacks = []
-    @display_name = Utils.toComponentName(@constructor.tag)
+    @__releaseCallbacks = []
+    @displayName = Utils.toComponentName(@constructor.tag)
 
-  setProperty: (name, val) ->
+  setProperty: (name, value) ->
     return unless name of @element.props
     prop = @element.props[name]
-    return if prop.value is val and not Array.isArray(val)
-    old_value = prop.value
-    prop.value = val
-    Utils.reflect(@element, prop.attribute, val)
+    return if prop.value is value and not Array.isArray(value)
+    oldValue = prop.value
+    prop.value = value
+    Utils.reflect(@element, prop.attribute, value)
     if prop.notify
-      @trigger('propertychange', {value: val, old_value, name})
+      @trigger('propertychange', {value, oldValue, name})
 
   onRender: ->
   onMounted: ->
@@ -23,32 +23,36 @@ module.exports = class Component
   onRelease: ->
     return if @__released
     @__released = true
-    callback(@) while callback = @__release_callbacks.pop()
+    callback(@) while callback = @__releaseCallbacks.pop()
     delete @element
 
   wasReleased: -> !!@__released
 
-  addReleaseCallback: (fn) -> @__release_callbacks.push(fn)
+  addReleaseCallback: (fn) -> @__releaseCallbacks.push(fn)
 
   ###############
   # Integration Methods
   # Here to make sure asyncronous operations only last the lifetime of the component
-  delay: (delay_time, callback) ->
-    [delay_time, callback] = [0, delay_time] if Utils.isFunction(delay_time)
-    timer = setTimeout callback, delay_time
+  delay: (delayTime, callback) ->
+    [delayTime, callback] = [0, delayTime] if Utils.isFunction(delayTime)
+    timer = setTimeout(callback, delayTime)
     @addReleaseCallback -> clearTimeout(timer)
     return timer
 
-  interval: (delay_time, callback) ->
-    timer = setInterval callback, delay_time
+  interval: (delayTime, callback) ->
+    timer = setInterval(callback, delayTime)
     @addReleaseCallback -> clearInterval(timer)
     return timer
 
   trigger: (name, detail, options={}) ->
     event = new CustomEvent(name, Object.assign({detail, bubbles: true, cancelable: true}, options))
-    not_cancelled = true
-    not_cancelled = !!@element['on'+name]?(event) if @element['on'+name]
-    not_cancelled and !!@element.dispatchEvent(event)
+    notCancelled = true
+    notCancelled = !!@element['on'+name]?(event) if @element['on'+name]
+    notCancelled and !!@element.dispatchEvent(event)
+
+  forward: (name) ->
+    @on name, ({detail, bubbles, cancelable, composed}) =>
+      @trigger name, detail, {bubbles, cancelable, composed}
 
   # handles child events for delegation
   on: (name, handler) ->

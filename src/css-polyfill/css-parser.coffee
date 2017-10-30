@@ -6,7 +6,7 @@ ATTR_MATCHER = /[\[\(][^)\]]+[\]\)]|:[a-zA-Z0-9_\-]+|([.#]?[a-zA-Z0-9_\-\*]+)/g
 
 # used to approximate shadow dom css encapsulation
 class ComponentParser extends NodeFactory
-  constructor: (@tag_name, @identifier) ->
+  constructor: (@tagName, @identifier) ->
 
   ruleset: (selector, rulelist) ->
     parts = selector.split(',')
@@ -22,11 +22,11 @@ class ComponentParser extends NodeFactory
         part += ":not([#{@identifier}])" if @identifier
       parts[i] = switch
         when part.indexOf(':host-context') isnt -1
-          part.replace(HOSTCONTEXT, (m, c, expr) => "#{@tag_name}#{expr}") +
-            part.replace(HOSTCONTEXT, (m, c, expr) => ", #{expr} #{@tag_name}")
+          part.replace(HOSTCONTEXT, (m, c, expr) => "#{@tagName}#{expr}") +
+            part.replace(HOSTCONTEXT, (m, c, expr) => ", #{expr} #{@tagName}")
         when part.indexOf(':host(') isnt -1
-          part.replace(HOST, (m, c, expr) => "#{@tag_name}#{expr}")
-        else @tag_name + ' ' + part.replace(':host', '')
+          part.replace(HOST, (m, c, expr) => "#{@tagName}#{expr}")
+        else @tagName + ' ' + part.replace(':host', '')
     selector = parts.join(',')
     super(selector, rulelist)
 
