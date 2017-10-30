@@ -1,5 +1,5 @@
 Utils = require './utils'
-CSSPolyfill = require './css_polyfill'
+CSSPolyfill = require './css-polyfill'
 COUNTER = 0
 
 module.exports = class BaseElement extends HTMLElement
