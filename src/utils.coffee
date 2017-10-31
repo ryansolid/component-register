@@ -50,7 +50,7 @@ module.exports = class ComponentUtils
       return equal
     x is y
 
-  @toAttribute: (propName) -> propName.replace(/\.?([A-Z]+)/g, (x,y) ->  "-" + y.toLowerCase()).replace(/^-/, "")
+  @toAttribute: (propName) -> propName.replace(/\.?([A-Z]+)/g, (x,y) ->  "-" + y.toLowerCase()).replace('_','-').replace(/^-/, "")
   @toProperty: (attr) -> attr?.toLowerCase().replace(/(-)([a-z])/g, (test) -> test.toUpperCase().replace('-',''))
   @toComponentName: (tag) -> tag?.toLowerCase().replace(/(^|-)([a-z])/g, (test) -> test.toUpperCase().replace('-',''))
 
