@@ -68,6 +68,7 @@ module.exports = class BaseElement extends HTMLElement
     # check that infact it connected since polyfill sometimes double calls
     if Utils.connectedToDOM(@) and not @__component and not @hasAttribute('_binding')
       Utils.scheduleMicroTask =>
+        return unless Utils.connectedToDOM(@)
         @__component_type?::bindDom(@, @context or {}) unless @__component or @hasAttribute('_binding')
         delete @context
 
