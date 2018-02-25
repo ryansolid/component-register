@@ -23,7 +23,7 @@ stringify = (buff, doc) ->
       return buff += '<!--' + doc.content + '-->'
   return
 
-module.exports = (doc) ->
+export default (doc) ->
   doc.reduce ((token, rootEl) ->
     token + stringify('', rootEl)
   ), ''

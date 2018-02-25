@@ -1,7 +1,7 @@
 {
   "name": "component-register",
   "description": "Basic Wrapper around Web Components",
-  "version": "0.3.0",
+  "version": "0.4.0-beta.1",
   "author": "Ryan Carniato",
   "license": "MIT",
   "readmeFilename": "README.md",
@@ -10,9 +10,9 @@
     "prepublish": "coffee --compile --bare --no-header --output lib/ src/"
   },
   "dependencies": {
-    "shady-css-parser": "0.0.x"
+    "shady-css-parser": "0.1.x"
   },
   "devDependencies": {
-    "coffeescript": "1.x"
+    "coffeescript": "2.x"
   }
 }

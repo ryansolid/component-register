@@ -1,7 +1,7 @@
 div = document.createElement('div');
 shadowDOMV1 = !!div.attachShadow;
 
-module.exports = class ComponentUtils
+export default class ComponentUtils
   @polyfillCSS: !shadowDOMV1
 
   @normalizePropDefs: (props) ->

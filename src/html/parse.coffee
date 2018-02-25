@@ -56,7 +56,7 @@ pushCommentNode = (list, tag) ->
       content: content
   return
 
-module.exports = (html) ->
+export default (html) ->
   result = []
   current = undefined
   level = -1

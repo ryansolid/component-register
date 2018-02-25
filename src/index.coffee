@@ -1,17 +1,13 @@
-Utils = require './utils'
+import Utils from './utils'
+import createElementDefinition from './element'
 
-module.exports =
-  Element: require './element'
-  Component: require './component'
-  Registry: Registry = {}
-  Utils: Utils
+registerComponent: (tag, {props, styles, BaseElement=HTMLElement, scopeCSS=true}, extension) -> (ComponentType) ->
+  return console.error 'Component missing static tag property' unless tag
+  Utils.normalizePropDefs(props)
+  element = createElementDefinition({
+    BaseElement, ComponentType, propDefinition: props, childStyles: styles, scopeCSS
+  })
+  customElements.define(tag, element, extension)
+  element
 
-  registerComponent: (Component) ->
-    return console.error 'Component missing static tag property' unless tag = Component?.tag
-    Utils.normalizePropDefs(Component.props)
-    element = class CustomElement extends Component::ElementType
-      ComponentType: Component
-      @observedAttributes: (prop.attribute for name, prop of Component.props)
-    Registry[Utils.toComponentName(Component.tag.toLowerCase())] = Component
-    customElements.define(Component.tag, element)
-    Component
+export { Utils, ComponentElement, registerComponent}

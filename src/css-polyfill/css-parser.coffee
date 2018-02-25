@@ -1,4 +1,4 @@
-{NodeFactory, Parser, Stringifier} = require 'shady-css-parser'
+import {NodeFactory, Parser, Stringifier} from 'shady-css-parser'
 SLOTTED = /(?:::slotted)(?:\(((?:\([^)(]*\)|[^)(]*)+?)\))/
 HOST = /(:host)(?:\(((?:\([^)(]*\)|[^)(]*)+?)\))/
 HOSTCONTEXT = /(:host-context)(?:\(((?:\([^)(]*\)|[^)(]*)+?)\))/
@@ -30,7 +30,7 @@ class ComponentParser extends NodeFactory
     selector = parts.join(',')
     super(selector, rulelist)
 
-module.exports = (scope, styles, identifier) ->
+export default (scope, styles, identifier) ->
   parser = new Parser(new ComponentParser(scope, identifier))
   parsed = parser.parse(styles)
   return (new Stringifier()).stringify(parsed)
