@@ -1,7 +1,8 @@
 import Utils from './utils'
 import createElementDefinition from './element'
+import createMixin from './mixins/create'
 
-registerComponent: (tag, {props, styles, BaseElement=HTMLElement, scopeCSS=true}, extension) -> (ComponentType) ->
+register = (tag, { props, styles, BaseElement = HTMLElement, scopeCSS = true } = {}, extension) -> (ComponentType) ->
   return console.error 'Component missing static tag property' unless tag
   Utils.normalizePropDefs(props)
   element = createElementDefinition({
@@ -10,4 +11,4 @@ registerComponent: (tag, {props, styles, BaseElement=HTMLElement, scopeCSS=true}
   customElements.define(tag, element, extension)
   element
 
-export { Utils, ComponentElement, registerComponent}
+export { Utils, register, createMixin }

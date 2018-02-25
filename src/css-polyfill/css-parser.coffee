@@ -7,6 +7,7 @@ ATTR_MATCHER = /[\[\(][^)\]]+[\]\)]|:[a-zA-Z0-9_\-]+|([.#]?[a-zA-Z0-9_\-\*]+)/g
 # used to approximate shadow dom css encapsulation
 class ComponentParser extends NodeFactory
   constructor: (@tagName, @identifier) ->
+    super()
 
   ruleset: (selector, rulelist) ->
     parts = selector.split(',')

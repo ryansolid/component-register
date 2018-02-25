@@ -1,4 +1,7 @@
-mixin = (element) ->
+import createMixin from './create'
+
+export default createMixin (options) ->
+  {element} = options
   events = {
     trigger: (name, options={}) -> element.trigger(options)
 
@@ -17,9 +20,4 @@ mixin = (element) ->
       emitter.on key, fn
       element.addReleaseCallback => emitter.off key, fn
   }
-
-export default (Component) ->
-  (element, props) ->
-    newProps = Object.assign(props, { events: mixin(element) })
-    return new Component(element, newProps) if Component::constructor.name
-    Component(element, newProps)
+  {options..., events}

@@ -16,8 +16,8 @@ export default class ComponentUtils
   @cloneProps: (props) ->
     newProps = {}
     for k, prop of props
-      newProps[k] = Object.assign({}, prop)
-      newProps[k].value = Object.assign({}, prop.value) if ComponentUtils.isObject(prop.value) and not ComponentUtils.isFunction(prop.value) and not Array.isArray(prop.value)
+      newProps[k] = {prop...}
+      newProps[k].value ={prop.value...} if ComponentUtils.isObject(prop.value) and not ComponentUtils.isFunction(prop.value) and not Array.isArray(prop.value)
       newProps[k].value = prop.value[..] if Array.isArray(prop.value)
     newProps
 

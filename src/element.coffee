@@ -1,5 +1,5 @@
 import Utils from './utils'
-import CSSPolyfill from './css-polyfill'
+import { css } from './css-polyfill'
 COUNTER = 0
 
 export default ({BaseElement, propDefinition, ComponentType, childStyles, scopeCSS}) ->
@@ -9,16 +9,16 @@ export default ({BaseElement, propDefinition, ComponentType, childStyles, scopeC
       # check that infact it connected since polyfill sometimes double calls
       return unless Utils.connectedToDOM(@) and not @__initialized
       @_initializeProps()
+      @__releaseCallbacks = []
       @attachShadow({ mode: 'open' })
       @cssId = @_appendStyles()
+      props = Utils.propValues(@props)
       try
-        if ComponentTyp::constructor.name
-          new ComponentType(@, Utils.propValues(@props))
-        else ComponentType(@, Utils.propValues(@props) )
+        if ComponentType::constructor.name
+          new ComponentType({element: @, props})
+        else ComponentType({element: @, props})
       catch err
         console.error "Error creating component #{Utils.toComponentName(@nodeName.toLowerCase())}:", err
-
-      @__releaseCallbacks = []
       @__initialized = true
 
     disconnectedCallback: ->
@@ -89,7 +89,7 @@ export default ({BaseElement, propDefinition, ComponentType, childStyles, scopeC
         scope = @nodeName.toLowerCase()
         unless script = document.head.querySelector("[scope='#{scope}']")
           cssId = "_co#{COUNTER++}"
-          styles = CSSPolyfill.css(scope, styles, if scopeCSS then cssId else undefined)
+          styles = css(scope, styles, if scopeCSS then cssId else undefined)
           script = document.createElement('style')
           script.setAttribute('type', 'text/css')
           script.setAttribute('scope', scope)
