@@ -10,7 +10,6 @@ export default ({BaseElement, propDefinition, ComponentType, childStyles, scopeC
       return unless Utils.connectedToDOM(@) and not @__initialized
       @_initializeProps()
       @__releaseCallbacks = []
-      @attachShadow({ mode: 'open' })
       @cssId = @_appendStyles()
       props = Utils.propValues(@props)
       try
@@ -40,6 +39,8 @@ export default ({BaseElement, propDefinition, ComponentType, childStyles, scopeC
       return unless props = propDefinition
       return k for k, v of props when attr_name in [k, v.attribute]
 
+    renderRoot: -> @shadowRoot or @attachShadow({ mode: 'open' })
+
     setProperty: (name, value) ->
       return unless name of @props
       prop = @props[name]
@@ -48,7 +49,7 @@ export default ({BaseElement, propDefinition, ComponentType, childStyles, scopeC
       prop.value = value
       Utils.reflect(@, prop.attribute, value)
       if prop.notify
-        @trigger('propertychange', {value, oldValue, name})
+        @trigger('propertychange', {detail: {value, oldValue, name}})
 
     trigger: (name, {detail, bubbles = true, cancelable = true, composed = false}) ->
       event = new CustomEvent(name, {detail, bubbles, cancelable, composed})
@@ -83,7 +84,7 @@ export default ({BaseElement, propDefinition, ComponentType, childStyles, scopeC
           script = document.createElement('style')
           script.setAttribute('type', 'text/css')
           script.textContent = styles
-          @shadowRoot.appendChild(script)
+          @renderRoot().appendChild(script)
           return
         # append globally otherwise
         scope = @nodeName.toLowerCase()
@@ -97,4 +98,5 @@ export default ({BaseElement, propDefinition, ComponentType, childStyles, scopeC
           script.textContent = styles
           document.head.appendChild(script)
         else cssId = script.id
+        return unless scopeCSS
         return cssId

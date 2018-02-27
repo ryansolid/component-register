@@ -2,7 +2,7 @@ import Utils from './utils'
 import createElementDefinition from './element'
 import createMixin from './mixins/create'
 
-register = (tag, { props, styles, BaseElement = HTMLElement, scopeCSS = true } = {}, extension) -> (ComponentType) ->
+register = (tag, { props, styles, BaseElement = HTMLElement, scopeCSS = Utils.scopeCSS } = {}, extension) -> (ComponentType) ->
   return console.error 'Component missing static tag property' unless tag
   Utils.normalizePropDefs(props)
   element = createElementDefinition({

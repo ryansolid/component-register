@@ -1,4 +1,5 @@
 import createMixin from './create'
+import Utils from '../utils'
 
 export default createMixin (options) ->
   {element} = options
