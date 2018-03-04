@@ -1,8 +1,6 @@
 import Utils from './utils'
-import { css } from './css-polyfill'
-COUNTER = 0
 
-export default ({BaseElement, propDefinition, ComponentType, childStyles, scopeCSS}) ->
+export default ({BaseElement, propDefinition, ComponentType}) ->
   class CustomElement extends BaseElement
     @observedAttributes: (prop.attribute for name, prop of propDefinition)
     connectedCallback: ->
@@ -10,7 +8,6 @@ export default ({BaseElement, propDefinition, ComponentType, childStyles, scopeC
       return unless Utils.connectedToDOM(@) and not @__initialized
       @_initializeProps()
       @__releaseCallbacks = []
-      @cssId = @_appendStyles()
       props = Utils.propValues(@props)
       try
         if ComponentType::constructor.name
@@ -22,10 +19,10 @@ export default ({BaseElement, propDefinition, ComponentType, childStyles, scopeC
 
     disconnectedCallback: ->
       # prevent premature releasing when element is only temporarely removed from DOM
-      Utils.scheduleMicroTask =>
-        return if Utils.connectedToDOM(@)
-        callback(@) while callback = @__releaseCallbacks.pop()
-        @__released = true
+      await Promise.resolve()
+      return if Utils.connectedToDOM(@)
+      callback(@) while callback = @__releaseCallbacks.pop()
+      @__released = true
 
     attributeChangedCallback: (name, old_val, new_val) ->
       return unless @props
@@ -77,26 +74,4 @@ export default ({BaseElement, propDefinition, ComponentType, childStyles, scopeC
             Utils.reflect(@, prop.attribute, @props[key].value)
             @onPropertyChangedCallback?(key, val)
         }
-
-    _appendStyles: ->
-      if styles = childStyles
-        unless Utils.polyfillCSS
-          script = document.createElement('style')
-          script.setAttribute('type', 'text/css')
-          script.textContent = styles
-          @renderRoot().appendChild(script)
-          return
-        # append globally otherwise
-        scope = @nodeName.toLowerCase()
-        unless script = document.head.querySelector("[scope='#{scope}']")
-          cssId = "_co#{COUNTER++}"
-          styles = css(scope, styles, if scopeCSS then cssId else undefined)
-          script = document.createElement('style')
-          script.setAttribute('type', 'text/css')
-          script.setAttribute('scope', scope)
-          script.id = cssId
-          script.textContent = styles
-          document.head.appendChild(script)
-        else cssId = script.id
-        return unless scopeCSS
-        return cssId
+      return

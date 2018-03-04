@@ -2,8 +2,7 @@ div = document.createElement('div');
 shadowDOMV1 = !!div.attachShadow;
 
 export default class ComponentUtils
-  @polyfillCSS: !shadowDOMV1
-  @scopeCSS = true
+  @nativeShadowDOM: shadowDOMV1
 
   @normalizePropDefs: (props) ->
     return unless props
@@ -85,29 +84,3 @@ export default class ComponentUtils
     return true if document.body.contains(node)
     null while (node = node.parentNode or node.host) and node isnt document.documentElement
     node is document.documentElement
-
-  @scheduleMicroTask: do ->
-    # Using 2 mutation observers to batch multiple updates into one.
-    div = document.createElement('div')
-    options = {attributes: true}
-    toggleScheduled = false
-    div2 = document.createElement('div')
-    o2 = new MutationObserver ->
-      div.classList.toggle('foo')
-      toggleScheduled = false
-      return
-    o2.observe(div2, options)
-
-    scheduleToggle = ->
-      return if toggleScheduled
-      toggleScheduled = true
-      div2.classList.toggle('foo')
-      return
-
-    (callback) ->
-      o = new MutationObserver ->
-        o.disconnect()
-        callback()
-        return
-      o.observe(div, options)
-      scheduleToggle()
