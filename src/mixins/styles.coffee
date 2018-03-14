@@ -1,11 +1,12 @@
 import Utils from '../utils'
 import createMixin from './create'
-import { css } from '../css-polyfill'
+import { css, html } from '../css-polyfill'
 COUNTER = 0
 
 export default createMixin (options) ->
   { element } = options
-  element.appendStyles = (styles, scopeCSS=true) ->
+  cssId = null
+  appendStyles = (styles, scopeCSS=true) ->
     return unless styles
     if Utils.nativeShadowDOM
       script = document.createElement('style')
@@ -25,6 +26,7 @@ export default createMixin (options) ->
       script.textContent = styles
       document.head.appendChild(script)
     else cssId = script.id
-    return unless scopeCSS
-    return cssId
-  options
+
+  transformTemplate = (template) -> html(template, cssId) if cssId and scopeCSS
+
+  { options..., appendStyles, transformTemplate }

@@ -70,7 +70,7 @@ export default class ComponentUtils
       node.__updating[attribute] = true
       reflect = '' if reflect is 'true'
       node.setAttribute(attribute, reflect)
-      ComponentUtils.scheduleMicroTask -> delete node.__updating[attribute]
+      Promise.resolve().then -> delete node.__updating[attribute]
     else node.removeAttribute(attribute)
 
   @isObject: (obj) -> obj isnt null and typeof obj in ['object', 'function']
