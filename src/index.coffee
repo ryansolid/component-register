@@ -1,6 +1,6 @@
 import Utils from './utils'
 import createElementDefinition from './element'
-import createMixin from './mixins/create'
+import createMixin from './createMixin'
 
 register = (tag, { props, BaseElement = HTMLElement } = {}, extension) -> (ComponentType) ->
   return console.error 'Component missing static tag property' unless tag

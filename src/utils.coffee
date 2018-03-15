@@ -1,5 +1,5 @@
-div = document.createElement('div');
-shadowDOMV1 = !!div.attachShadow;
+div = document?.createElement('div');
+shadowDOMV1 = !!div?.attachShadow;
 
 export default class ComponentUtils
   @nativeShadowDOM: shadowDOMV1

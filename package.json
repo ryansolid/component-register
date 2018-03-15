@@ -1,7 +1,7 @@
 {
   "name": "component-register",
   "description": "Basic Wrapper around Web Components",
-  "version": "0.4.0-beta.5",
+  "version": "0.4.0-beta.6",
   "author": "Ryan Carniato",
   "license": "MIT",
   "readmeFilename": "README.md",
@@ -25,9 +25,6 @@
     "build-es": "coffee --compile --bare --no-header --output dist/es/ src/",
     "build-node": "coffee --compile --transpile --bare --no-header --output dist/node/ src/",
     "prepare": "npm run build-es & npm run build-node"
-  },
-  "dependencies": {
-    "shady-css-parser": "0.1.x"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
