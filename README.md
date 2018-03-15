@@ -12,11 +12,11 @@ Example Usage
 
 The simplest use would be:
 
-  import { register } from 'component-register';
+    import { register } from 'component-register';
 
-  register('my-element')( ({ element }) => {
-    element.renderRoot().innerHTML = 'Hello World'
-  })
+    register('my-element')( ({ element }) => {
+      element.renderRoot().innerHTML = 'Hello World'
+    })
 
 This creates a custom element with the tag 'my-element' and the text 'Hello World' in its shadow root.
 
