@@ -79,6 +79,9 @@ export default class ComponentUtils
 
   @isString: (val) -> Object::toString.call(val) is "[object String]"
 
+  @isConstructor: (f) ->
+    return typeof f is 'function' and f.hasOwnProperty('prototype') and !f.hasOwnProperty('arguments')
+
   @connectedToDOM: (node) ->
     return node.isConnected if 'isConnected' of node
     return true if document.body.contains(node)

@@ -10,7 +10,7 @@ export default ({BaseElement, propDefinition, ComponentType}) ->
       @__releaseCallbacks = []
       props = Utils.propValues(@props)
       try
-        if ComponentType::constructor.name
+        if Utils.isConstructor(ComponentType)
           new ComponentType({element: @, props})
         else ComponentType({element: @, props})
       catch err
