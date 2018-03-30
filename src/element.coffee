@@ -8,6 +8,7 @@ export default ({BaseElement, propDefinition, ComponentType}) ->
       return unless Utils.connectedToDOM(@) and not @__initialized
       @_initializeProps()
       @__releaseCallbacks = []
+      @__propertyChangedCallbacks = []
       props = Utils.propValues(@props)
       try
         if Utils.isConstructor(ComponentType)
@@ -21,6 +22,7 @@ export default ({BaseElement, propDefinition, ComponentType}) ->
       # prevent premature releasing when element is only temporarely removed from DOM
       await Promise.resolve()
       return if Utils.connectedToDOM(@)
+      @__propertyChangedCallbacks.length = 0
       callback(@) while callback = @__releaseCallbacks.pop()
       @__released = true
 
@@ -56,6 +58,8 @@ export default ({BaseElement, propDefinition, ComponentType}) ->
 
     addReleaseCallback: (fn) -> @__releaseCallbacks.push(fn)
 
+    addPropertyChangedCallback: (fn) -> @__propertyChangedCallbacks.push(fn)
+
     _initializeProps: ->
       @props = Utils.cloneProps(propDefinition)
       @__updating = {}
@@ -72,6 +76,6 @@ export default ({BaseElement, propDefinition, ComponentType}) ->
               @props[key].value = val[..]
             else @props[key].value = val
             Utils.reflect(@, prop.attribute, @props[key].value)
-            @onPropertyChangedCallback?(key, val)
+            callback(key, val) for callback in @__propertyChangedCallbacks
         }
       return
