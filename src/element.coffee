@@ -26,13 +26,13 @@ export default ({BaseElement, propDefinition, ComponentType}) ->
       callback(@) while callback = @__releaseCallbacks.pop()
       @__released = true
 
-    attributeChangedCallback: (name, old_val, new_val) ->
+    attributeChangedCallback: (name, oldVal, newVal) ->
       return unless @props
       return if @__updating[name]
       name = @lookupProp(name)
       if name of @props
-        return if new_val is null and not @[name]
-        @[name] = Utils.parseAttributeValue(new_val)
+        return if newVal is null and not @[name]
+        @[name] = Utils.parseAttributeValue(newVal)
 
     lookupProp: (attr_name) ->
       return unless props = propDefinition
@@ -43,7 +43,6 @@ export default ({BaseElement, propDefinition, ComponentType}) ->
     setProperty: (name, value) ->
       return unless name of @props
       prop = @props[name]
-      return if prop.value is value and not Array.isArray(value)
       oldValue = prop.value
       prop.value = value
       Utils.reflect(@, prop.attribute, value)
@@ -71,11 +70,9 @@ export default ({BaseElement, propDefinition, ComponentType}) ->
         Object.defineProperty @, key, {
           get: -> @props[key].value
           set: (val) ->
-            return if Utils.isEqual(val, @props[key].value)
-            if Array.isArray(val)
-              @props[key].value = val[..]
-            else @props[key].value = val
+            oldValue = @props[key].value
+            @props[key].value = val
             Utils.reflect(@, prop.attribute, @props[key].value)
-            callback(key, val) for callback in @__propertyChangedCallbacks
+            callback(key, val, oldValue) for callback in @__propertyChangedCallbacks
         }
       return
