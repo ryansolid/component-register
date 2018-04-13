@@ -1,0 +1,14 @@
+{
+  "ignore": [ "node_modules" ],
+  "plugins": [ "add-module-exports" ],
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "node": "8.0.0"
+        }
+      }
+    ]
+  ]
+}

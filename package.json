@@ -1,30 +1,16 @@
 {
   "name": "component-register",
   "description": "Basic Wrapper around Web Components",
-  "version": "0.4.0-beta.10",
+  "version": "0.4.0-beta.11",
   "author": "Ryan Carniato",
   "license": "MIT",
   "readmeFilename": "README.md",
   "main": "dist/node/index.js",
   "module": "dist/es/index.js",
-  "babel": {
-    "ignore": [ "node_modules" ],
-    "plugins": [ "add-module-exports" ],
-    "presets": [
-      [
-        "env",
-        {
-          "targets": {
-            "node": "8.0.0"
-          }
-        }
-      ]
-    ]
-  },
   "scripts": {
     "build-es": "coffee --compile --bare --no-header --output dist/es/ src/",
     "build-node": "coffee --compile --transpile --bare --no-header --output dist/node/ src/",
-    "prepare": "npm run build-es & npm run build-node"
+    "prepublishOnly": "npm run build-es & npm run build-node"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
