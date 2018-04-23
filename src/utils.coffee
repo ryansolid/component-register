@@ -1,7 +1,7 @@
 div = document?.createElement('div');
 shadowDOMV1 = !!div?.attachShadow;
 
-export default {
+export default ComponentUtils = {
   nativeShadowDOM: shadowDOMV1
 
   normalizePropDefs: (props) ->
