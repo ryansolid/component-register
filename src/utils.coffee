@@ -26,30 +26,6 @@ export default ComponentUtils = {
     values[k] = prop.value for k, prop of props
     values
 
-  # deepEqual
-  isEqual: (x, y, xStack=[], yStack=[]) ->
-    return true if x is y
-
-    dateA = x instanceof Date
-    dateB = y instanceof Date
-    return x.getTime() is y.getTime() if dateA and dateB
-    return false if dateA != dateB
-
-    keys = Object.keys; tx = typeof x; ty = typeof y
-    if x and y and tx is 'object' and tx is ty
-      # handle circular dependencies
-      length = xStack.length;
-      while length--
-        return yStack[length] is y if xStack[length] is x
-      xStack.push(x)
-      yStack.push(y)
-      equal = keys(x).length is keys(y).length and keys(x).every (key) ->
-        ComponentUtils.isEqual(x[key], y[key], xStack, yStack)
-      xStack.pop()
-      yStack.pop()
-      return equal
-    x is y
-
   toAttribute: (propName) -> propName.replace(/\.?([A-Z]+)/g, (x,y) ->  "-" + y.toLowerCase()).replace('_','-').replace(/^-/, "")
   toProperty: (attr) -> attr?.toLowerCase().replace(/(-)([a-z])/g, (test) -> test.toUpperCase().replace('-',''))
   toComponentName: (tag) -> tag?.toLowerCase().replace(/(^|-)([a-z])/g, (test) -> test.toUpperCase().replace('-',''))

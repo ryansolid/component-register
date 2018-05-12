@@ -1,16 +1,14 @@
 {
   "name": "component-register",
   "description": "Basic Wrapper around Web Components",
-  "version": "0.4.0-beta.13",
+  "version": "0.4.0-beta.14",
   "author": "Ryan Carniato",
   "license": "MIT",
   "readmeFilename": "README.md",
   "main": "lib/component-register.js",
   "module": "dist/component-register.js",
   "scripts": {
-    "build-es": "rollup -f \"es\" -c -o dist/component-register.js",
-    "build-cjs": "rollup -f \"cjs\" -c -o lib/component-register.js",
-    "prepublishOnly": "npm run build-es && npm run build-cjs"
+    "prepublishOnly": "rollup -c"
   },
   "devDependencies": {
     "coffeescript": "2.x",
