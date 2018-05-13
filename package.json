@@ -1,7 +1,7 @@
 {
   "name": "component-register",
   "description": "Basic Wrapper around Web Components",
-  "version": "0.4.0-beta.14",
+  "version": "0.4.0",
   "author": "Ryan Carniato",
   "license": "MIT",
   "readmeFilename": "README.md",
@@ -11,7 +11,7 @@
     "prepublishOnly": "rollup -c"
   },
   "devDependencies": {
-    "coffeescript": "2.x",
+    "coffeescript": "2.2.3",
     "rollup": "^0.58.1",
     "rollup-plugin-coffee2": "^0.1.15",
     "rollup-plugin-node-resolve": "^3.3.0"

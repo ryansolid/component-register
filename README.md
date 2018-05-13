@@ -1,8 +1,6 @@
 # Component Register
 
-Component Register is wrapper around the V1 Webcomponent Standard with the intention of providing a convention around the shortcoming of the standard where all arguments are passed through attribute strings. This library uses a convention to pass non-basic values as element properties.
-
-It is the intention of this library to provide a framework agnostic base for webcomponents by the use of simple functional composition to wrap existing components.  Unlike Polymer this is not a full framework with binding language and syntax.  All the mechanism used are pure JS with the expectation that to be used with any existing framework one would simply wrap. In so like the standard itself you aren't tied to a specific framework and can mix and match as you see fit. The register method is setup like a HOC or ESNext decorator and takes a function or class definition as it's parameter and calls it's it with an options object that passes the custom element. Wrapping an existing framework would essentially be adding another HOC in between to map it to the expected constructor format.
+It is the intention of this library to provide a framework agnostic base for webcomponents by the use of simple functional composition to wrap components from existing libraries.  Unlike Polymer this is not a full framework with binding language and syntax.  All the mechanism used are pure JS with the expectation that to be used with any existing framework one would simply wrap.
 
 This library is designed to work in environments that already support custom elements, templates, and shadow dom. If those are not present your target browser can include the [component-register-platform](https://github.com/ryansolid/component-register-platform) shim which includes some ES2015 and webcomponents.js polyfills to give support back to IE11. Alternatively for more modern browsers without full support the webcomponents.js polyfills will do the trick.
 
@@ -38,7 +36,7 @@ You can also register a release callback via:
 
 Functions registered this way will be called when the component has been removed from the DOM for full Macrotask cycle.
 
-With these 2 methods its very easy to write HOC mixins that can react to changes and cleanup after themselves. The library includes createMixin as an easy way to add behavior to your elements. For example making a mixin to make a Component draggable with optional opacity on drag:
+With these 2 methods its very easy to write mixins that can react to changes and cleanup after themselves. The library includes createMixin as an easy way to add behavior to your elements. For example making a mixin to make a Component draggable with optional opacity on drag:
 
     import { createMixin } from 'component-register';
 
@@ -93,3 +91,9 @@ Or using compose:
     )({ element }) =>
       element.renderRoot().innerHTML = 'Hello World'
     ))
+
+[component-register-extensions](https://github.com/ryansolid/component-register-extensions) includes some other examples of simple mixins.
+
+## Status
+
+This library over time has been made smaller as the polyfills have been removed. 0.4.0 breaks out a much simpler API. However, still playing catch up on Documentation and Tests.
