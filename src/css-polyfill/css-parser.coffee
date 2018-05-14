@@ -26,7 +26,9 @@ class ComponentParser extends NodeFactory
             part.replace(HOSTCONTEXT, (m, c, expr) => ", #{expr} #{@tagName}")
         when part.indexOf(':host(') isnt -1
           part.replace(HOST, (m, c, expr) => "#{@tagName}#{expr}")
-        else @tagName + ' ' + part.replace(':host', '')
+        when part.indexOf(':host') isnt -1
+          @tagName + ' ' + part.replace(':host', '')
+        else part
     selector = parts.join(',')
     super(selector, rulelist)
 
