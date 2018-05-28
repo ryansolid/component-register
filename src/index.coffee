@@ -3,6 +3,7 @@ import createElementDefinition from './element'
 
 register = (tag, { props, BaseElement = HTMLElement } = {}, extension) -> (ComponentType) ->
   return console.error 'Component missing static tag property' unless tag
+  return console.log('Component already registered with tag', tag) if customElements.get(tag)
   Utils.normalizePropDefs(props)
   element = createElementDefinition({
     BaseElement, ComponentType, propDefinition: props
