@@ -97,7 +97,8 @@ Or using compose:
 ## Examples
 
 * [component-register-ko](https://github.com/ryansolid/component-register-ko) The project where I started experimenting with generalizing webcomponents. It has a lot of extras but is good example of a template based rendering library.
-*[component-register-react](https://github.com/ryansolid/component-register-react) This is very light implementation to demonstrate using React Components as is as Custom Elements.
+
+* [component-register-react](https://github.com/ryansolid/component-register-react) This is very light implementation to demonstrate using React Components as is as Custom Elements.
 
 ## Status
 
