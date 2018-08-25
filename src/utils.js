@@ -1,4 +1,4 @@
-const div = document.createElement('div');
+const testElem = document.createElement('div');
 
 function cloneProps(props) {
   const propKeys = Object.keys(props);
@@ -11,7 +11,7 @@ function cloneProps(props) {
   }, {});
 }
 
-export const nativeShadowDOM = !!div.attachShadow;
+export const nativeShadowDOM = !!testElem.attachShadow;
 
 export function normalizePropDefs(props) {
   if (!props) return;
@@ -102,7 +102,7 @@ export function isConstructor(f) {
 }
 
 export function connectedToDOM(node) {
-  if ('isConnect' in node) return node.isConnected;
+  if ('isConnected' in node) return node.isConnected;
   if (document.body.contains(node)) return true;
   while (node && node !== document.documentElement) {
     node = node.parentNode || node.host;
