@@ -1,4 +1,4 @@
-import { connectedToDOM, propValues, isConstructor, toComponentName, reflect, initializeProps } from './utils';
+import { connectedToDOM, propValues, isConstructor, toComponentName, reflect, initializeProps, parseAttributeValue } from './utils';
 
 
 export default function createElementType({BaseElement, propDefinition, ComponentType}) {

@@ -45,10 +45,10 @@ With these 2 methods its very easy to write mixins that can react to changes and
 ```js
 import { createMixin } from 'component-register';
 
-export default withDraggable = function({opacity} = {}) {
-  return createMixin(function(options) {
-    var closeDragElement, element, elementDrag, pos1, pos2, pos3, pos4;
-    ({element} = options);
+export default function withDraggable({opacity} = {}) {
+  return createMixin((options) => {
+    let { element } = options,
+      pos1, pos2, pos3, pos4;
     pos1 = pos2 = pos3 = pos4 = null;
     element.style.position = 'absolute';
     element.onmousedown = function(e) {
@@ -58,22 +58,22 @@ export default withDraggable = function({opacity} = {}) {
         element.style.opacity = opacity;
       }
       document.onmouseup = closeDragElement;
-      return document.onmousemove = elementDrag;
+      document.onmousemove = elementDrag;
     };
-    elementDrag = function(e) {
+    function elementDrag(e) {
       pos1 = pos3 - e.clientX;
       pos2 = pos4 - e.clientY;
       pos3 = e.clientX;
       pos4 = e.clientY;
       element.style.top = (element.offsetTop - pos2) + "px";
-      return element.style.left = (element.offsetLeft - pos1) + "px";
+      element.style.left = (element.offsetLeft - pos1) + "px";
     };
-    closeDragElement = function() {
+    function closeDragElement() {
       if (opacity != null) {
         element.style.opacity = 1;
       }
       document.onmouseup = null;
-      return document.onmousemove = null;
+      document.onmousemove = null;
     };
     return options;
   });
