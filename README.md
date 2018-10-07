@@ -110,6 +110,8 @@ compose(
 
 * [component-register-react](https://github.com/ryansolid/component-register-react) This is very light implementation to demonstrate using React Components as is as Custom Elements.
 
+* [solid-components](https://github.com/ryansolid/solid-components) Component implementation for [Solid](https://github.com/ryansolid/solid) that showcases some more powerful usage of the library.
+
 ## Status
 
 This library over time has been made smaller as the polyfills have been removed. 0.5.0 breaks out a much simpler API and ES6 modules to support Tree Shaking. However, still playing catch up on Documentation and Tests.
