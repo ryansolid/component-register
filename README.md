@@ -28,7 +28,9 @@ register('my-greeting', {name: 'World'})(({ element, props }) =>
 )
 ```
 
-These props map to both element[propName] and an attribute prop-name. You can register a callback handler via:
+These props map to both element[propName] and an attribute prop-name. Alternatively you can initialize props with an object which has properties value (default value), notify (fire an event on change, for 2 way binding libraries), and attribute (if you want to name the attribute for the prop differently than the default).
+
+You can register a callback handler via:
 
 ### element.addPropertyChangedCallback(fn)
 
@@ -104,9 +106,62 @@ compose(
 
 [component-register-extensions](https://github.com/ryansolid/component-register-extensions) includes some other examples of simple mixins.
 
+## Context API
+
+For dependency injection this library supports a Provider/Consumer Context API.
+
+### createContext(initFn): ContextObject
+
+If an init function is provided it will be called by the provider on creation with the provided value.
+
+### withProvider(context, initialValue)
+### useProvider(context, initialValue)
+
+HOC and direct method for adding a new provider instance of the supplied context in the render tree.
+
+### withConsumer(context, key)
+### useConsumer(context): contextInstance
+
+HOC mixins in context for the component on that key and direct method returns the context instance.
+
+```jsx
+// counter.js
+import { createContext } from 'component-register';
+
+/* You can put whatever you want in here, as this container is not responsible for the reactivity of your application you need to provide your own mechanisms. */
+export createContext((count = 0) => {
+  return [count, {
+    increment() { count += 1; }
+    decrement() { count -= 1; }
+  }];
+});
+
+// app.js
+import { register, compose, withProvider } from 'component-register';
+import CounterContext from './counter';
+
+const AppComponent = /* Some component */
+
+compose(
+  register('app-component'),
+  withProvider(CounterContext)
+)(AppComponent);
+
+// nested.js
+import { register, compose, withConsumer } from 'component-register';
+import CounterContext from './counter';
+
+const NestedComponent = ({ counter }) => { /* ... */ }
+
+compose(
+  register('nested-component'),
+  withConsumer(CounterContext, 'counter')
+)(NestedComponent);
+```
+
 ## Examples
 
-* [component-register-ko](https://github.com/ryansolid/component-register-ko) The project where I started experimenting with generalizing webcomponents. It has a lot of extras but is good example of a template based rendering library.
+* [component-register-ko](https://github.com/ryansolid/component-register-ko) The project where I started experimenting with generalizing webcomponents. It has a lot of extras but is good example of a template based rendering library with fine grained KVO (key value observable) change detection and support for 2 way binding.
 
 * [component-register-react](https://github.com/ryansolid/component-register-react) This is very light implementation to demonstrate using React Components as is as Custom Elements.
 

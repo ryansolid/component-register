@@ -1,4 +1,4 @@
-import createElementType from './createElementType';
+import { createElementType } from './element';
 import { normalizePropDefs } from './utils';
 
 export function register(tag, props = {}, options = {}) {
@@ -15,11 +15,7 @@ export function register(tag, props = {}, options = {}) {
   }
 }
 
-export function compose(...fns) {
-  if (fns.length === 0) return i => i;
-  if (fns.length === 1) return fns[0];
-  return fns.reduce((a, b) => (...args) => a(b(...args)));
-}
-
 export { nativeShadowDOM, isConstructor, isObject, isFunction, isString, toComponentName, toAttribute, toProperty, connectedToDOM } from './utils';
-export { createMixin } from './createMixin';
+export { createMixin, compose } from './mixin';
+export * from './context';
+export { getCurrentElement } from './element';

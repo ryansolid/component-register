@@ -1,7 +1,9 @@
 import { connectedToDOM, propValues, isConstructor, toComponentName, reflect, initializeProps, parseAttributeValue } from './utils';
 
+let currentElement;
+export function getCurrentElement() { return currentElement; }
 
-export default function createElementType({BaseElement, propDefinition, ComponentType}) {
+export function createElementType({BaseElement, propDefinition, ComponentType}) {
   const propKeys = Object.keys(propDefinition);
   return class CustomElement extends BaseElement {
     static get observedAttributes() { return propKeys.map(k => propDefinition[k].attribute); }
@@ -13,12 +15,16 @@ export default function createElementType({BaseElement, propDefinition, Componen
       this.__propertyChangedCallbacks = [];
       this.__updating = {};
       this.props = initializeProps(this, propDefinition);
-      const props = propValues(this.props)
+      const props = propValues(this.props),
+        outerElement = currentElement;
       try {
+        currentElement = this;
         if (isConstructor(ComponentType)) new ComponentType({element: this, props});
         else ComponentType({element: this, props});
       } catch (err) {
         console.error(`Error creating component ${toComponentName(this.nodeName.toLowerCase())}:`, err);
+      } finally {
+        currentElement = outerElement;
       }
       this.__initialized = true;
     }
