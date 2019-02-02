@@ -1,12 +1,16 @@
 {
   "name": "component-register",
   "description": "Basic Wrapper around Web Components",
-  "version": "0.5.3",
+  "version": "0.6.0",
   "author": "Ryan Carniato",
   "license": "MIT",
   "readmeFilename": "README.md",
   "main": "lib/component-register.js",
   "module": "dist/component-register.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ryansolid/component-register"
+  },
   "scripts": {
     "prepublishOnly": "rollup -c"
   },

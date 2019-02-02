@@ -11,7 +11,7 @@ The simplest use would be:
 ```js
 import { register } from 'component-register';
 
-register('my-element')(({ element }) =>
+register('my-element')((props, { element }) =>
   element.renderRoot().innerHTML = 'Hello World'
 )
 ```
@@ -23,7 +23,7 @@ You can also define props by giving a name and a default value:
 ```js
 import { register } from 'component-register';
 
-register('my-greeting', {name: 'World'})(({ element, props }) =>
+register('my-greeting', {name: 'World'})((props, { element }) =>
   element.renderRoot().innerHTML = `Hello ${props.name}`
 )
 ```
@@ -87,8 +87,8 @@ To use this mixin you would just wrap your component like so:
 ```js
 import { register } from 'component-register';
 
-register('my-draggable')(withDraggable({opacity: 0.6})(({ element }) =>
-  element.renderRoot().innerHTML = 'Hello World'
+register('my-draggable')(withDraggable({opacity: 0.6})((props, { element }) =>
+  // ....
 ))
 ```
 
@@ -99,12 +99,14 @@ import { register, compose } from 'component-register';
 compose(
   register('my-draggable'),
   withDraggable({opacity: 0.6})
-)({ element }) =>
-  element.renderRoot().innerHTML = 'Hello World'
+)(props, { element }) =>
+  // ....
 ))
 ```
 
 [component-register-extensions](https://github.com/ryansolid/component-register-extensions) includes some other examples of simple mixins.
+
+Alternative the library exposes a ```getCurrentElement()``` method that can be used to create mixins that can be added in the constructor or initialization function of the component without explicitly passing in the element.
 
 ## Context API
 
@@ -115,12 +117,12 @@ For dependency injection this library supports a Provider/Consumer Context API.
 If an init function is provided it will be called by the provider on creation with the provided value.
 
 ### withProvider(context, initialValue)
-### useProvider(context, initialValue)
+### provide(context, initialValue)
 
 HOC and direct method for adding a new provider instance of the supplied context in the render tree.
 
 ### withConsumer(context, key)
-### useConsumer(context): contextInstance
+### consume(context): contextInstance
 
 HOC mixins in context for the component on that key and direct method returns the context instance.
 
@@ -151,7 +153,7 @@ compose(
 import { register, compose, withConsumer } from 'component-register';
 import CounterContext from './counter';
 
-const NestedComponent = ({ counter }) => { /* ... */ }
+const NestedComponent = (props, { counter }) => { /* ... */ }
 
 compose(
   register('nested-component'),
@@ -161,12 +163,14 @@ compose(
 
 ## Examples
 
-* [component-register-ko](https://github.com/ryansolid/component-register-ko) The project where I started experimenting with generalizing webcomponents. It has a lot of extras but is good example of a template based rendering library with fine grained KVO (key value observable) change detection and support for 2 way binding.
+* [component-register-preact](https://github.com/ryansolid/component-register-react) This implementation to demonstrate using Preact Components as is as Custom Elements.
 
-* [component-register-react](https://github.com/ryansolid/component-register-react) This is very light implementation to demonstrate using React Components as is as Custom Elements.
+* [component-register-react](https://github.com/ryansolid/component-register-react) This implementation to demonstrate using React Components as is as Custom Elements.
 
 * [solid-components](https://github.com/ryansolid/solid-components) Component implementation for [Solid](https://github.com/ryansolid/solid) that showcases some more powerful usage of the library.
 
+* [component-register-ko](https://github.com/ryansolid/component-register-ko) The project where I started experimenting with generalizing webcomponents. It has a lot of extras but is good example of a template based rendering library with fine grained KVO (key value observable) change detection and support for 2 way binding.
+
 ## Status
 
-This library over time has been made smaller as the polyfills have been removed. 0.5.0 breaks out a much simpler API and ES6 modules to support Tree Shaking. However, still playing catch up on Documentation and Tests.
+This library over time has been made smaller as the polyfills have been removed. The external API is mostly stable

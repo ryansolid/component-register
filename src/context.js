@@ -11,13 +11,13 @@ export function createContext(initFn) {
   return { id: Symbol('context'), initFn };
 }
 
-// Hooks
-export function useProvider(context, value, element = getCurrentElement()) {
+// Direct
+export function provide(context, value, element = getCurrentElement()) {
   element[EC] || (element[EC] = {});
   element[EC][context.id] = context.initFn ? context.initFn(value): value;
 }
 
-export function useConsumer(context) {
+export function consume(context) {
   const element = getCurrentElement();
   return lookupContext(element, context);
 }
@@ -26,7 +26,7 @@ export function useConsumer(context) {
 export function withProvider(context, value) {
   return createMixin(options => {
     const { element } = options;
-    useProvider(context, value, element);
+    provide(context, value, element);
     return options;
   });
 }

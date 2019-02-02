@@ -19,8 +19,8 @@ export function createElementType({BaseElement, propDefinition, ComponentType}) 
         outerElement = currentElement;
       try {
         currentElement = this;
-        if (isConstructor(ComponentType)) new ComponentType({element: this, props});
-        else ComponentType({element: this, props});
+        if (isConstructor(ComponentType)) new ComponentType(props, {element: this});
+        else ComponentType(props, {element: this});
       } catch (err) {
         console.error(`Error creating component ${toComponentName(this.nodeName.toLowerCase())}:`, err);
       } finally {
@@ -66,7 +66,7 @@ export function createElementType({BaseElement, propDefinition, ComponentType}) 
         this.trigger('propertychange', {detail: {value, oldValue, name}})
     }
 
-    trigger(name, {detail, bubbles = true, cancelable = true, composed = false}) {
+    trigger(name, {detail, bubbles = true, cancelable = true, composed = false} = {}) {
       const event = new CustomEvent(name, {detail, bubbles, cancelable, composed});
       let notCancelled = true;
       if (this['on'+name]) notCancelled = !!this['on'+name](event);

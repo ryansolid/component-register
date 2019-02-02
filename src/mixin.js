@@ -2,10 +2,10 @@ import { isConstructor } from './utils';
 
 export function createMixin(mixinFn) {
   return ComponentType =>
-    options => {
+    (props, options) => {
       options = mixinFn(options);
-      if (isConstructor(ComponentType)) return new ComponentType(options);
-      return ComponentType(options);
+      if (isConstructor(ComponentType)) return new ComponentType(props, options);
+      return ComponentType(props, options);
     }
 }
 
