@@ -163,13 +163,15 @@ compose(
 
 ## Examples
 
+* [component-register-hooks](https://github.com/ryansolid/component-register-hooks) A React Hooks API inspired state management extension to integrate with your favourite micro-renderer like LitHTML, HyperHTML, or IncrementalDOM.
+
+* [solid-components](https://github.com/ryansolid/solid-components) Component implementation for [Solid](https://github.com/ryansolid/solid) that showcases some more powerful usage of the library with Fine Grained change managment.
+
 * [component-register-preact](https://github.com/ryansolid/component-register-react) This implementation to demonstrate using Preact Components as is as Custom Elements.
 
-* [component-register-react](https://github.com/ryansolid/component-register-react) This implementation to demonstrate using React Components as is as Custom Elements.
+* [component-register-react](https://github.com/ryansolid/component-register-react) This implementation to demonstrate using React Components as is as Custom Elements. Does event retargetting to support Reacts event system in the Shadow DOM.
 
-* [solid-components](https://github.com/ryansolid/solid-components) Component implementation for [Solid](https://github.com/ryansolid/solid) that showcases some more powerful usage of the library.
-
-* [component-register-ko](https://github.com/ryansolid/component-register-ko) The project where I started experimenting with generalizing webcomponents. It has a lot of extras but is good example of a template based rendering library with fine grained KVO (key value observable) change detection and support for 2 way binding.
+* [component-register-ko](https://github.com/ryansolid/component-register-ko) The project where I started experimenting with generalizing webcomponents. It has a lot of extras but is good example of a template based rendering library with fine grained change management and support for 2 way binding.
 
 ## Status
 
