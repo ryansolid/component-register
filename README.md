@@ -1,6 +1,8 @@
 # Component Register
 
-It is the intention of this library to provide a framework agnostic base for webcomponents by the use of simple functional composition to wrap components from existing libraries.  The expectation is to be used with any existing framework one would simply wrap.
+This library provides a framework agnostic base for webcomponents by the use of simple composition to wrap components from any existing library.
+
+Don't know anything about webcomponents? Doesn't matter! This library is designed to transparently wrap the existing Components you have. None of this psuedo API imposing. Want React WebComponents?Write natural React Components.
 
 This library is designed to work in environments that already support custom elements, templates, and shadow dom. If those are not present your target browser can include the [component-register-platform](https://github.com/ryansolid/component-register-platform) shim which includes some ES2015 and webcomponents.js polyfills to give support back to IE11. Alternatively for more modern browsers without full support the webcomponents.js polyfills will do the trick.
 
