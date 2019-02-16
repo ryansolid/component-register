@@ -66,7 +66,7 @@ export function createElementType({BaseElement, propDefinition, ComponentType}) 
         this.trigger('propertychange', {detail: {value, oldValue, name}})
     }
 
-    trigger(name, {detail, bubbles = true, cancelable = true, composed = false} = {}) {
+    trigger(name, {detail, bubbles = true, cancelable = true, composed = true} = {}) {
       const event = new CustomEvent(name, {detail, bubbles, cancelable, composed});
       let notCancelled = true;
       if (this['on'+name]) notCancelled = !!this['on'+name](event);
