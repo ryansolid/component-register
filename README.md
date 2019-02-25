@@ -14,7 +14,7 @@ This library is designed to work in environments that already support custom ele
 
 * [solid-components](https://github.com/ryansolid/solid-components) Component implementation for [Solid](https://github.com/ryansolid/solid) that showcases some more powerful usage of the library with Fine Grained change managment.
 
-* [component-register-preact](https://github.com/ryansolid/component-register-react) This implementation to demonstrate using Preact Components as is as Custom Elements.
+* [component-register-preact](https://github.com/ryansolid/component-register-preact) This implementation to demonstrate using Preact Components as is as Custom Elements.
 
 * [component-register-react](https://github.com/ryansolid/component-register-react) This implementation to demonstrate using React Components as is as Custom Elements. Does event retargetting to support Reacts event system in the Shadow DOM.
 
