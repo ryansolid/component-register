@@ -1,7 +1,7 @@
 {
   "name": "component-register",
   "description": "Basic Wrapper around Web Components",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "author": "Ryan Carniato",
   "license": "MIT",
   "readmeFilename": "README.md",
@@ -12,10 +12,18 @@
     "url": "https://github.com/ryansolid/component-register"
   },
   "scripts": {
-    "prepublishOnly": "rollup -c"
+    "build": "rollup -c",
+    "prepublishOnly": "npm run build",
+    "test": "npm run build && jest"
+  },
+  "jest": {
+    "testEnvironment": "@skatejs/ssr/jest"
   },
   "devDependencies": {
-    "rollup": "^1.0.0",
+    "@skatejs/ssr": "0.19.11",
+    "coveralls": "3.0.3",
+    "jest": "24.1.0",
+    "rollup": "^1.2.3",
     "rollup-plugin-node-resolve": "^4.0.0"
   }
 }

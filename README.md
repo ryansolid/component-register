@@ -1,5 +1,12 @@
 # Component Register
 
+[![Build Status](https://img.shields.io/travis/com/ryansolid/component-register.svg?style=flat)](https://travis-ci.com/ryansolid/component-register)
+[![Coverage Status](https://img.shields.io/coveralls/github/ryansolid/component-register.svg?style=flat)](https://coveralls.io/github/ryansolid/component-register?branch=master)
+[![NPM Version](https://img.shields.io/npm/v/component-register.svg?style=flat)](https://www.npmjs.com/package/component-register)
+![](https://img.shields.io/bundlephobia/minzip/component-register.svg?style=flat)
+![](https://img.shields.io/david/ryansolid/component-register.svg?style=flat)
+![](https://img.shields.io/npm/dt/component-register.svg?style=flat)
+
 This library provides a framework agnostic base for webcomponents by the use of simple composition to wrap components from any existing library.
 
 Don't know anything about webcomponents? Doesn't matter! This library is designed to transparently wrap the existing Components you have. None of this psuedo API imposing. Want React WebComponents?Write natural React Components.

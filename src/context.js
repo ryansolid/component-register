@@ -17,8 +17,7 @@ export function provide(context, value, element = getCurrentElement()) {
   element[EC][context.id] = context.initFn ? context.initFn(value): value;
 }
 
-export function consume(context) {
-  const element = getCurrentElement();
+export function consume(context, element = getCurrentElement()) {
   return lookupContext(element, context);
 }
 

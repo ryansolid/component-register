@@ -1,4 +1,4 @@
-import { connectedToDOM, propValues, isConstructor, toComponentName, reflect, initializeProps, parseAttributeValue } from './utils';
+import { connectedToDOM, propValues, isConstructor, toComponentName, initializeProps, parseAttributeValue } from './utils';
 
 let currentElement;
 export function getCurrentElement() { return currentElement; }
@@ -36,6 +36,7 @@ export function createElementType({BaseElement, propDefinition, ComponentType}) 
       this.__propertyChangedCallbacks.length = 0
       let callback = null;
       while(callback = this.__releaseCallbacks.pop()) callback(this);
+      delete this.__initialized;
       this.__released = true;
     }
 
@@ -60,8 +61,7 @@ export function createElementType({BaseElement, propDefinition, ComponentType}) 
       if (!(name in this.props)) return;
       const prop = this.props[name],
         oldValue = prop.value;
-      prop.value = value;
-      reflect(this, prop.attribute, value);
+      this[name] = value;
       if (prop.notify)
         this.trigger('propertychange', {detail: {value, oldValue, name}})
     }

@@ -95,8 +95,6 @@ export function isObject(obj) { return obj != null && (typeof obj === 'object' |
 
 export function isFunction(val) { return Object.prototype.toString.call(val) === "[object Function]" }
 
-export function isString(val) { return Object.prototype.toString.call(val) === "[object String]" }
-
 export function isConstructor(f) {
   return typeof f === 'function' && f.toString().indexOf('class') === 0
 }
