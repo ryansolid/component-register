@@ -68,9 +68,11 @@ export function createElementType({BaseElement, propDefinition, ComponentType}) 
 
     trigger(name, {detail, bubbles = true, cancelable = true, composed = true} = {}) {
       const event = new CustomEvent(name, {detail, bubbles, cancelable, composed});
-      let notCancelled = true;
-      if (this['on'+name]) notCancelled = !!this['on'+name](event);
-      notCancelled && !!this.dispatchEvent(event);
+      let cancelled = false;
+      if (this['on'+name]) cancelled = this['on'+name](event) === false;
+      if (cancelled) event.preventDefault();
+      this.dispatchEvent(event);
+      return event;
     }
 
     addReleaseCallback(fn) { this.__releaseCallbacks.push(fn) }
