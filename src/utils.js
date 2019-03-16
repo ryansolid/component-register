@@ -101,9 +101,10 @@ export function isConstructor(f) {
 
 export function connectedToDOM(node) {
   if ('isConnected' in node) return node.isConnected;
-  if (document.body.contains(node)) return true;
-  while (node && node !== document.documentElement) {
+  const doc = node.ownerDocument;
+  if (doc.body.contains(node)) return true;
+  while (node && node !== doc.documentElement) {
     node = node.parentNode || node.host;
   }
-  return node === document.documentElement;
+  return node === doc.documentElement;
 }
