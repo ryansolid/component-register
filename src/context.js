@@ -14,7 +14,7 @@ export function createContext(initFn) {
 // Direct
 export function provide(context, value, element = getCurrentElement()) {
   element[EC] || (element[EC] = {});
-  element[EC][context.id] = context.initFn ? context.initFn(value): value;
+  return element[EC][context.id] = context.initFn ? context.initFn(value): value;
 }
 
 export function consume(context, element = getCurrentElement()) {

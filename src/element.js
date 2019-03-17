@@ -10,7 +10,7 @@ export function createElementType({BaseElement, propDefinition, ComponentType}) 
 
     connectedCallback() {
       // check that infact it connected since polyfill sometimes double calls
-      if (!connectedToDOM(this) || this.__initialized) return;
+      if (!connectedToDOM(this) || this.__initializing || this.__initialized) return;
       this.__releaseCallbacks = [];
       this.__propertyChangedCallbacks = [];
       this.__updating = {};
@@ -18,6 +18,7 @@ export function createElementType({BaseElement, propDefinition, ComponentType}) 
       const props = propValues(this.props),
         outerElement = currentElement;
       try {
+        this.__initializing = true;
         currentElement = this;
         if (isConstructor(ComponentType)) new ComponentType(props, {element: this});
         else ComponentType(props, {element: this});
@@ -25,6 +26,7 @@ export function createElementType({BaseElement, propDefinition, ComponentType}) 
         console.error(`Error creating component ${toComponentName(this.nodeName.toLowerCase())}:`, err);
       } finally {
         currentElement = outerElement;
+        delete this.__initializing;
       }
       this.__initialized = true;
     }
