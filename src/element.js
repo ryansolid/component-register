@@ -3,7 +3,7 @@ import { connectedToDOM, propValues, isConstructor, toComponentName, initializeP
 let currentElement;
 export function getCurrentElement() { return currentElement; }
 
-export function createElementType({BaseElement, propDefinition, ComponentType}) {
+export function createElementType(BaseElement, propDefinition) {
   const propKeys = Object.keys(propDefinition);
   return class CustomElement extends BaseElement {
     static get observedAttributes() { return propKeys.map(k => propDefinition[k].attribute); }
@@ -16,6 +16,7 @@ export function createElementType({BaseElement, propDefinition, ComponentType}) 
       this.__updating = {};
       this.props = initializeProps(this, propDefinition);
       const props = propValues(this.props),
+        ComponentType = CustomElement.Component,
         outerElement = currentElement;
       try {
         this.__initializing = true;
@@ -50,6 +51,14 @@ export function createElementType({BaseElement, propDefinition, ComponentType}) 
         if (newVal == null && !this[name]) return;
         this[name] = parseAttributeValue(newVal);
       }
+    }
+
+    reloadComponent() {
+      let callback = null;
+      while(callback = this.__releaseCallbacks.pop()) callback(this);
+      delete this.__initialized;
+      this.renderRoot().textContent = '';
+      this.connectedCallback();
     }
 
     lookupProp(attrName) {

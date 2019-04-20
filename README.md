@@ -184,6 +184,22 @@ compose(
 )(NestedComponent);
 ```
 
-## Status
+## Hot Module Replacement (New)
 
-This library over time has been made smaller as the polyfills have been removed. The external API is mostly stable
+Component Register provides a Hot Module Replacement solution for Webpack and Parcel. This is a new feature, that is looking for feedback.
+
+Hot Module Replacement with Web Components is not the most trivial thing. Custom Elements can only be defined once. SkateJS uses a mechanism where they increment the tag name to ensure each iteration can be replaced. However, Component Register never exposes the native Web Component APIs so it can handle updates internally. What it does is keep the current Element attached to the page and swaps out the supplied Component with new version.
+
+Since Component Register is unaware of your Component's internals it just calls the release callbacks and instantiates the Component again completely re-rendering the subtree without affecting any ancestors or siblings. In so local state is not preserved.
+
+To use HMR make sure your bundler/dev server is configured(See Webpack instructions [here](https://webpack.js.org/guides/hot-module-replacement/)). Then import `hot` and pass in module and the tag name of your component.
+
+```js
+import { register, hot } from 'component-register';
+
+register('my-element')((props, element) => { /* component code */ }));
+
+hot(module, 'my-element');
+```
+
+HMR generally will look at the changed file, and if it is not accepted trace up the dependencies. So at a minimum you can do the following on the root element to have the full page reloading. But applying this to specific nested elements you can reduce the impact of the update.
