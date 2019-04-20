@@ -2,8 +2,8 @@ function walk(root, call) {
   call(root);
   if (root.shadowRoot) walk(root.shadowRoot, call);
   let child = root.firstChild;
-  while (child && child.nodeType === 1) {
-    walk(child, call);
+  while (child) {
+    (child.nodeType === 1) && walk(child, call);
     child = child.nextSibling;
   }
 }
