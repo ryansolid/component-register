@@ -53,7 +53,8 @@ export function initializeProps(element, propDefinition) {
           this.__propertyChangedCallbacks[i](key, val, oldValue)
         }
       },
-      enumerable: true
+      enumerable: true,
+      configurable: true
     });
   });
   return props;
