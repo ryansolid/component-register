@@ -20,6 +20,7 @@ export function register(tag: string, props: Props = {}, options: RegisterOption
 
     ElementType = createElementType(BaseElement, normalizePropDefs(props));
     ElementType.prototype.Component = ComponentType;
+    ElementType.prototype.registeredTag = tag;
     customElements.define(tag, ElementType, extension);
     return ElementType;
   }
