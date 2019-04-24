@@ -1,12 +1,32 @@
-import { connectedToDOM, propValues, isConstructor, toComponentName, initializeProps, parseAttributeValue } from './utils';
+import { connectedToDOM, propValues, isConstructor, toComponentName, initializeProps, parseAttributeValue, ComponentType, PropsDefinition } from './utils';
 
-let currentElement;
+let currentElement: HTMLElement;
 export function getCurrentElement() { return currentElement; }
 
-export function createElementType(BaseElement, propDefinition) {
+export function createElementType(BaseElement: typeof HTMLElement, propDefinition: PropsDefinition) {
   const propKeys = Object.keys(propDefinition);
   return class CustomElement extends BaseElement {
+    [prop: string]: any;
+    __initializing: boolean;
+    __initialized: boolean;
+    __released: boolean;
+    __releaseCallbacks: any[];
+    __propertyChangedCallbacks: any[];
+    __updating: { [prop: string]: any };
+    props: { [prop: string]: any };
+
     static get observedAttributes() { return propKeys.map(k => propDefinition[k].attribute); }
+
+    constructor() {
+      super();
+      this.__initializing = false;
+      this.__initialized = false;
+      this.__released = false;
+      this.__releaseCallbacks = [];
+      this.__propertyChangedCallbacks = [];
+      this.__updating = {};
+      this.props = {};
+    }
 
     connectedCallback() {
       // check that infact it connected since polyfill sometimes double calls
@@ -16,7 +36,7 @@ export function createElementType(BaseElement, propDefinition) {
       this.__updating = {};
       this.props = initializeProps(this, propDefinition);
       const props = propValues(this.props),
-        ComponentType = CustomElement.Component,
+        ComponentType = this.Component as ComponentType,
         outerElement = currentElement;
       try {
         this.__initializing = true;
@@ -43,10 +63,10 @@ export function createElementType(BaseElement, propDefinition) {
       this.__released = true;
     }
 
-    attributeChangedCallback(name, oldVal, newVal) {
+    attributeChangedCallback(name: string, oldVal: string, newVal: string) {
       if (!this.__initialized) return;
       if (this.__updating[name]) return;
-      name = this.lookupProp(name);
+      name = this.lookupProp(name) as string;
       if (name in propDefinition) {
         if (newVal == null && !this[name]) return;
         this[name] = parseAttributeValue(newVal);
@@ -61,14 +81,14 @@ export function createElementType(BaseElement, propDefinition) {
       this.connectedCallback();
     }
 
-    lookupProp(attrName) {
+    lookupProp(attrName: string) {
       if(!propDefinition) return;
       return propKeys.find(k => attrName === k || attrName === propDefinition[k].attribute);
     }
 
     renderRoot() { return this.shadowRoot || this.attachShadow({ mode: 'open' }); }
 
-    setProperty(name, value) {
+    setProperty(name: string, value: unknown) {
       if (!(name in this.props)) return;
       const prop = this.props[name],
         oldValue = prop.value;
@@ -77,7 +97,11 @@ export function createElementType(BaseElement, propDefinition) {
         this.trigger('propertychange', {detail: {value, oldValue, name}})
     }
 
-    trigger(name, {detail, bubbles = true, cancelable = true, composed = true} = {}) {
+    trigger(
+      name:string,
+      {detail, bubbles = true, cancelable = true, composed = true}
+      : {detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean} = {}
+    ) {
       const event = new CustomEvent(name, {detail, bubbles, cancelable, composed});
       let cancelled = false;
       if (this['on'+name]) cancelled = this['on'+name](event) === false;
@@ -86,8 +110,8 @@ export function createElementType(BaseElement, propDefinition) {
       return event;
     }
 
-    addReleaseCallback(fn) { this.__releaseCallbacks.push(fn) }
+    addReleaseCallback(fn: () => void) { this.__releaseCallbacks.push(fn) }
 
-    addPropertyChangedCallback(fn) { this.__propertyChangedCallbacks.push(fn); }
+    addPropertyChangedCallback(fn: (name: string, value: any) => void) { this.__propertyChangedCallbacks.push(fn); }
   }
 }

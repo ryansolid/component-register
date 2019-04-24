@@ -2,3 +2,5 @@ src/
 rollup.config.js
 test/
 coverage/
+types/tsconfig.tsbuildinfo
+tsconfig.json

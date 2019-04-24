@@ -1,18 +1,19 @@
 {
   "name": "component-register",
   "description": "Basic Wrapper around Web Components",
-  "version": "0.6.7",
+  "version": "0.6.8",
   "author": "Ryan Carniato",
   "license": "MIT",
   "readmeFilename": "README.md",
   "main": "lib/component-register.js",
   "module": "dist/component-register.js",
+  "types": "types/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/ryansolid/component-register"
   },
   "scripts": {
-    "build": "rollup -c",
+    "build": "rollup -c && tsc",
     "prepublishOnly": "npm run build",
     "test": "npm run build && jest --coverage"
   },
@@ -20,10 +21,14 @@
     "testEnvironment": "@skatejs/ssr/jest"
   },
   "devDependencies": {
+    "@babel/core": "7.4.3",
+    "@babel/preset-typescript": "7.3.3",
     "@skatejs/ssr": "0.19.11",
     "coveralls": "3.0.3",
-    "jest": "24.1.0",
+    "jest": "24.7.1",
     "rollup": "^1.10.1",
-    "rollup-plugin-node-resolve": "^4.2.3"
+    "rollup-plugin-babel": "4.3.2",
+    "rollup-plugin-node-resolve": "4.2.3",
+    "typescript": "3.4.4"
   }
 }

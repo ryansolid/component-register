@@ -1,6 +1,15 @@
+interface PropDefinition {
+  value: any,
+  attribute: string,
+  notify: boolean
+}
+type UpdateableElement = HTMLElement & {__updating: {[k: string]: boolean}, [prop: string]: any }
+export type PropsDefinition = { [name: string]: PropDefinition }
+export interface ComponentType { (props: object, options: object): any, new(props: object, options: object): any }
+
 const testElem = document.createElement('div');
 
-function cloneProps(props) {
+function cloneProps(props: PropsDefinition) {
   const propKeys = Object.keys(props);
   return propKeys.reduce((memo, k) => {
     const prop = props[k];
@@ -8,13 +17,13 @@ function cloneProps(props) {
     if (isObject(prop.value) && !isFunction(prop.value) && !Array.isArray(prop.value)) memo[k].value = { ...prop.value };
     if (Array.isArray(prop.value)) memo[k].value = prop.value.slice(0);
     return memo;
-  }, {});
+  }, {} as PropsDefinition);
 }
 
 export const nativeShadowDOM = !!testElem.attachShadow;
 
-export function normalizePropDefs(props) {
-  if (!props) return;
+export function normalizePropDefs(props: {[k: string]: any}) {
+  if (!props) return {};
   const propKeys = Object.keys(props);
   return propKeys.reduce((memo, k) => {
     const v = props[k];
@@ -22,18 +31,18 @@ export function normalizePropDefs(props) {
     memo[k].notify != null || (memo[k].notify = false);
     memo[k].attribute || (memo[k].attribute = toAttribute(k));
     return memo;
-  }, {});
+  }, {} as PropsDefinition);
 }
 
-export function propValues(props) {
+export function propValues(props: PropsDefinition) {
   const propKeys = Object.keys(props);
   return propKeys.reduce((memo, k) => {
     memo[k] = props[k].value
     return memo
-  }, {});
+  }, {} as {[k: string]: any});
 }
 
-export function initializeProps(element, propDefinition) {
+export function initializeProps(element: UpdateableElement, propDefinition: PropsDefinition) {
   const props = cloneProps(propDefinition),
     propKeys = Object.keys(propDefinition);
   propKeys.forEach(key => {
@@ -60,7 +69,7 @@ export function initializeProps(element, propDefinition) {
   return props;
 }
 
-export function parseAttributeValue(value) {
+export function parseAttributeValue(value: string) {
   if (!value) return;
   let parsed;
   try {
@@ -74,7 +83,7 @@ export function parseAttributeValue(value) {
   return parsed;
 }
 
-export function reflect(node, attribute, value) {
+export function reflect(node: UpdateableElement, attribute: string, value: any) {
   if(isObject(value)) return;
 
   let reflect = value ? (typeof value.toString === 'function' ? value.toString() : undefined) : undefined;
@@ -86,26 +95,27 @@ export function reflect(node, attribute, value) {
   } else node.removeAttribute(attribute);
 }
 
-export function toAttribute(propName) { return propName.replace(/\.?([A-Z]+)/g, (x, y) =>  "-" + y.toLowerCase()).replace('_','-').replace(/^-/, ""); }
+export function toAttribute(propName: string) { return propName.replace(/\.?([A-Z]+)/g, (x, y) =>  "-" + y.toLowerCase()).replace('_','-').replace(/^-/, ""); }
 
-export function toProperty(attr) { return attr.toLowerCase().replace(/(-)([a-z])/g, test => test.toUpperCase().replace('-','')); }
+export function toProperty(attr: string) { return attr.toLowerCase().replace(/(-)([a-z])/g, test => test.toUpperCase().replace('-','')); }
 
-export function toComponentName(tag) { return tag.toLowerCase().replace(/(^|-)([a-z])/g, test => test.toUpperCase().replace('-','')); }
+export function toComponentName(tag: string) { return tag.toLowerCase().replace(/(^|-)([a-z])/g, test => test.toUpperCase().replace('-','')); }
 
-export function isObject(obj) { return obj != null && (typeof obj === 'object' || typeof obj === 'function'); }
+export function isObject(obj: any) { return obj != null && (typeof obj === 'object' || typeof obj === 'function'); }
 
-export function isFunction(val) { return Object.prototype.toString.call(val) === "[object Function]" }
+export function isFunction(val: any) { return Object.prototype.toString.call(val) === "[object Function]" }
 
-export function isConstructor(f) {
+export function isConstructor(f: Function) {
   return typeof f === 'function' && f.toString().indexOf('class') === 0
 }
 
-export function connectedToDOM(node) {
+export function connectedToDOM(node: Node) {
   if ('isConnected' in node) return node.isConnected;
-  const doc = node.ownerDocument;
+  const doc = (node as Node).ownerDocument;
+  if (!doc) return false;
   if (doc.body.contains(node)) return true;
   while (node && node !== doc.documentElement) {
-    node = node.parentNode || node.host;
+    node = node.parentNode || (node as ShadowRoot).host;
   }
   return node === doc.documentElement;
 }

@@ -1,7 +1,8 @@
 import nodeResolve from 'rollup-plugin-node-resolve';
+import babel from 'rollup-plugin-babel';
 
 export default {
-  input: 'src/index.js',
+  input: 'src/index.ts',
   output: [{
     file: 'lib/component-register.js',
     format: 'cjs',
@@ -11,6 +12,11 @@ export default {
     format: 'es'
   }],
   plugins: [
-    nodeResolve({ extensions: ['.js'] })
+    nodeResolve({ extensions: ['.js', '.ts'] }),
+    babel({
+      extensions: ['.js', '.ts'],
+      presets: ["@babel/preset-typescript"],
+      exclude: 'node_modules/**'
+    })
   ]
 };
