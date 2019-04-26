@@ -1,11 +1,29 @@
-import { connectedToDOM, propValues, isConstructor, toComponentName, initializeProps, parseAttributeValue, ComponentType, PropsDefinition } from './utils';
+import { connectedToDOM, propValues, isConstructor, toComponentName, initializeProps, parseAttributeValue, ComponentType, ConstructableComponent, FunctionComponent, PropsDefinition } from './utils';
+
+export interface ICustomElement {
+  [prop: string]: any;
+  __initializing: boolean;
+  __initialized: boolean;
+  __released: boolean;
+  __releaseCallbacks: any[];
+  __propertyChangedCallbacks: any[];
+  __updating: { [prop: string]: any };
+  props: { [prop: string]: any };
+  reloadComponent(): void;
+  lookupProp(attrName: string): string | undefined;
+  renderRoot(): Node;
+  setProperty(name: string, value: unknown): void;
+  trigger(name: string, options: { detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean }): CustomEvent;
+  addReleaseCallback(fn: () => void): void;
+  addPropertyChangedCallback(fn: (name: string, value: any) => void): void;
+}
 
 let currentElement: HTMLElement;
 export function getCurrentElement() { return currentElement; }
 
 export function createElementType(BaseElement: typeof HTMLElement, propDefinition: PropsDefinition) {
   const propKeys = Object.keys(propDefinition);
-  return class CustomElement extends BaseElement {
+  return class CustomElement extends BaseElement implements ICustomElement {
     [prop: string]: any;
     __initializing: boolean;
     __initialized: boolean;
@@ -36,13 +54,13 @@ export function createElementType(BaseElement: typeof HTMLElement, propDefinitio
       this.__updating = {};
       this.props = initializeProps(this, propDefinition);
       const props = propValues(this.props),
-        ComponentType = this.Component as ComponentType,
+        ComponentType = this.Component as Function | {new(...args: any[]): any},
         outerElement = currentElement;
       try {
         this.__initializing = true;
         currentElement = this;
-        if (isConstructor(ComponentType)) new ComponentType(props, {element: this});
-        else ComponentType(props, {element: this});
+        if (isConstructor(ComponentType)) new (ComponentType as ConstructableComponent)(props, {element: this});
+        else (ComponentType as FunctionComponent)(props, {element: this});
       } catch (err) {
         console.error(`Error creating component ${toComponentName(this.nodeName.toLowerCase())}:`, err);
       } finally {

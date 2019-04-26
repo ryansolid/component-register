@@ -4,8 +4,11 @@ interface PropDefinition {
   notify: boolean
 }
 type UpdateableElement = HTMLElement & {__updating: {[k: string]: boolean}, [prop: string]: any }
+export type Props = { [k: string]: any }
+export interface ConstructableComponent { new(props: Props, options: object): any }
+export interface FunctionComponent  { (props: Props, options: object): any }
 export type PropsDefinition = { [name: string]: PropDefinition }
-export interface ComponentType { (props: object, options: object): any, new(props: object, options: object): any }
+export type ComponentType = FunctionComponent | ConstructableComponent
 
 const testElem = document.createElement('div');
 

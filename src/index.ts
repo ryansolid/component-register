@@ -1,8 +1,11 @@
-import { createElementType } from './element';
-import { normalizePropDefs, ComponentType } from './utils';
+import { createElementType, ICustomElement } from './element';
+import { normalizePropDefs, ComponentType, ConstructableComponent, FunctionComponent, Props } from './utils';
 
-export type Props = { [k: string]: any };
+export type Props = Props;
 export type ComponentType = ComponentType;
+export type ConstructableComponent = ConstructableComponent;
+export type FunctionComponent = FunctionComponent;
+export type ICustomElement = ICustomElement;
 export type RegisterOptions = {
   BaseElement?: typeof HTMLElement,
   extension?: { extends: string }
