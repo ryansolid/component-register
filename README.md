@@ -202,4 +202,6 @@ register('my-element')((props, element) => { /* component code */ }));
 hot(module, 'my-element');
 ```
 
+Or use the webpack loader [Component Register Loader](https://github.com/ryansolid/component-register-loader) to have it automatically apply to your default exported component.
+
 HMR generally will look at the changed file, and if it is not accepted trace up the dependencies. So at a minimum you can do the following on the root element to have the full page reloading. But applying this to specific nested elements you can reduce the impact of the update.
