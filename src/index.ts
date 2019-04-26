@@ -1,8 +1,9 @@
 import { createElementType } from './element';
 import { normalizePropDefs, ComponentType } from './utils';
 
-type Props = { [k: string]: any };
-type RegisterOptions = {
+export type Props = { [k: string]: any };
+export type ComponentType = ComponentType;
+export type RegisterOptions = {
   BaseElement?: typeof HTMLElement,
   extension?: { extends: string }
 }

@@ -1,5 +1,6 @@
 src/
 rollup.config.js
+.travis.yml
 test/
 coverage/
 types/tsconfig.tsbuildinfo
