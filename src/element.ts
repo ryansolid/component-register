@@ -70,16 +70,15 @@ export function createElementType(BaseElement: typeof HTMLElement, propDefinitio
       this.__initialized = true;
     }
 
-    disconnectedCallback() {
+    async disconnectedCallback() {
       // prevent premature releasing when element is only temporarely removed from DOM
-      Promise.resolve().then(() => {
-        if (connectedToDOM(this)) return;
-        this.__propertyChangedCallbacks.length = 0;
-        let callback = null;
-        while (callback = this.__releaseCallbacks.pop()) callback(this);
-        delete this.__initialized;
-        this.__released = true;
-      });
+      await Promise.resolve();
+      if (connectedToDOM(this)) return;
+      this.__propertyChangedCallbacks.length = 0;
+      let callback = null;
+      while(callback = this.__releaseCallbacks.pop()) callback(this);
+      delete this.__initialized;
+      this.__released = true;
     }
 
     attributeChangedCallback(name: string, oldVal: string, newVal: string) {

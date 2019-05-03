@@ -19,7 +19,7 @@ This library is designed to work in environments that already support custom ele
 
 * [component-register-hooks](https://github.com/ryansolid/component-register-hooks) A React Hooks API inspired state management extension to integrate with your favourite micro-renderer like LitHTML, HyperHTML, or IncrementalDOM.
 
-* [solid-components](https://github.com/ryansolid/solid-components) Component implementation for [Solid](https://github.com/ryansolid/solid) that showcases some more powerful usage of the library with Fine Grained change managment.
+* [solid-element](https://github.com/ryansolid/solid-element) Custom Element implementation for [Solid](https://github.com/ryansolid/solid) that showcases some more powerful usage of the library with Fine Grained change managment.
 
 * [component-register-preact](https://github.com/ryansolid/component-register-preact) This implementation to demonstrate using Preact Components as is as Custom Elements.
 
