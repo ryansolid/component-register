@@ -39,7 +39,7 @@ export function withProvider(context: Context, value: any) {
 export function withConsumer(context: Context, key: string) {
   return createMixin((options: any) => {
     const { element } = options;
-    options = {...options, [key]: lookupContext(element, context)};
+    options = Object.assign({}, options, {[key]: lookupContext(element, context)});
     return options;
   });
 }

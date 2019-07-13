@@ -16,8 +16,8 @@ function cloneProps(props: PropsDefinition) {
   const propKeys = Object.keys(props);
   return propKeys.reduce((memo, k) => {
     const prop = props[k];
-    memo[k] = { ...prop };
-    if (isObject(prop.value) && !isFunction(prop.value) && !Array.isArray(prop.value)) memo[k].value = { ...prop.value };
+    memo[k] = Object.assign({}, prop);
+    if (isObject(prop.value) && !isFunction(prop.value) && !Array.isArray(prop.value)) memo[k].value = Object.assign({}, prop.value);
     if (Array.isArray(prop.value)) memo[k].value = prop.value.slice(0);
     return memo;
   }, {} as PropsDefinition);

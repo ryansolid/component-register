@@ -14,7 +14,7 @@ const FIXTURES = [
 const toggleMixin = createMixin(options => {
   const { element } = options,
     toggle = () => element.setAttribute('toggled', !element.getAttribute('toggled'));
-  return { ...options, toggle };
+  return Object.assign({}, options, { toggle });
 });
 
 describe('Creating Mixin', () => {
