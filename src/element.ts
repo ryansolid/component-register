@@ -1,22 +1,4 @@
-import { connectedToDOM, propValues, isConstructor, toComponentName, initializeProps, parseAttributeValue, ComponentType, ConstructableComponent, FunctionComponent, PropsDefinition } from './utils';
-
-export interface ICustomElement {
-  [prop: string]: any;
-  __initializing: boolean;
-  __initialized: boolean;
-  __released: boolean;
-  __releaseCallbacks: any[];
-  __propertyChangedCallbacks: any[];
-  __updating: { [prop: string]: any };
-  props: { [prop: string]: any };
-  reloadComponent(): void;
-  lookupProp(attrName: string): string | undefined;
-  renderRoot(): Node;
-  setProperty(name: string, value: unknown): void;
-  trigger(name: string, options: { detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean }): CustomEvent;
-  addReleaseCallback(fn: () => void): void;
-  addPropertyChangedCallback(fn: (name: string, value: any) => void): void;
-}
+import { connectedToDOM, propValues, isConstructor, toComponentName, initializeProps, parseAttributeValue, ICustomElement, ConstructableComponent, FunctionComponent, PropsDefinition } from './utils';
 
 let currentElement: HTMLElement;
 export function getCurrentElement() { return currentElement; }

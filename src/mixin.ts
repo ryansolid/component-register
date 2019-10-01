@@ -1,8 +1,8 @@
-import { isConstructor, ComponentType, ConstructableComponent, FunctionComponent } from './utils';
+import { isConstructor, ComponentType, ConstructableComponent, FunctionComponent, Props, ComponentOptions } from './utils';
 
-export function createMixin(mixinFn: (options: object) => object) {
+export function createMixin(mixinFn: (options: ComponentOptions) => ComponentOptions) {
   return (ComponentType: ComponentType) =>
-    ((props: object, options: object) => {
+    ((props: Props, options: ComponentOptions) => {
       options = mixinFn(options);
       if (isConstructor(ComponentType)) return new (ComponentType as ConstructableComponent)(props, options);
       return (ComponentType as FunctionComponent)(props, options);

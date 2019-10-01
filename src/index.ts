@@ -1,7 +1,8 @@
-import { createElementType, ICustomElement } from './element';
-import { normalizePropDefs, ComponentType, ConstructableComponent, FunctionComponent, Props } from './utils';
+import { createElementType, } from './element';
+import { normalizePropDefs, ComponentType, ConstructableComponent, FunctionComponent, Props, ComponentOptions, ICustomElement } from './utils';
 
 export type Props = Props;
+export type ComponentOptions = ComponentOptions;
 export type ComponentType = ComponentType;
 export type ConstructableComponent = ConstructableComponent;
 export type FunctionComponent = FunctionComponent;

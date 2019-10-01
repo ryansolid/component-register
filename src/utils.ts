@@ -3,10 +3,28 @@ interface PropDefinition {
   attribute: string,
   notify: boolean
 }
-type UpdateableElement = HTMLElement & {__updating: {[k: string]: boolean}, [prop: string]: any }
+export interface ICustomElement {
+  [prop: string]: any;
+  __initializing: boolean;
+  __initialized: boolean;
+  __released: boolean;
+  __releaseCallbacks: any[];
+  __propertyChangedCallbacks: any[];
+  __updating: { [prop: string]: any };
+  props: { [prop: string]: any };
+  reloadComponent(): void;
+  lookupProp(attrName: string): string | undefined;
+  renderRoot(): Element | Document | ShadowRoot | DocumentFragment;
+  setProperty(name: string, value: unknown): void;
+  trigger(name: string, options: { detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean }): CustomEvent;
+  addReleaseCallback(fn: () => void): void;
+  addPropertyChangedCallback(fn: (name: string, value: any) => void): void;
+}
+type UpdateableElement = HTMLElement & ICustomElement
 export type Props = { [k: string]: any }
-export interface ConstructableComponent { new(props: Props, options: object): any }
-export interface FunctionComponent  { (props: Props, options: object): any }
+export interface ComponentOptions { element: ICustomElement }
+export interface ConstructableComponent { new(props: Props, options: ComponentOptions): unknown }
+export interface FunctionComponent  { (props: Props, options: ComponentOptions): unknown }
 export type PropsDefinition = { [name: string]: PropDefinition }
 export type ComponentType = FunctionComponent | ConstructableComponent
 
