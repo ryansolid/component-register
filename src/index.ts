@@ -6,7 +6,7 @@ import {
   FunctionComponent as uFunctionComponent,
   ComponentOptions as uComponentOptions,
   ICustomElement as uICustomElement,
-  PropsDefinition
+  PropsDefinitionInput
 } from "./utils";
 
 export type ComponentOptions = uComponentOptions;
@@ -21,7 +21,7 @@ export type RegisterOptions = {
 
 export function register<T>(
   tag: string,
-  props = {} as PropsDefinition<T>,
+  props = {} as PropsDefinitionInput<T>,
   options: RegisterOptions = {}
 ) {
   const { BaseElement = HTMLElement, extension } = options;
