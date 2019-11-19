@@ -1,10 +1,28 @@
-import { connectedToDOM, propValues, isConstructor, toComponentName, initializeProps, parseAttributeValue, ICustomElement, ConstructableComponent, FunctionComponent, PropsDefinition } from './utils';
+import {
+  connectedToDOM,
+  propValues,
+  isConstructor,
+  toComponentName,
+  initializeProps,
+  parseAttributeValue,
+  ICustomElement,
+  ConstructableComponent,
+  FunctionComponent,
+  PropsDefinition,
+} from "./utils";
 
 let currentElement: HTMLElement;
-export function getCurrentElement() { return currentElement; }
+export function getCurrentElement() {
+  return currentElement;
+}
 
-export function createElementType(BaseElement: typeof HTMLElement, propDefinition: PropsDefinition) {
-  const propKeys = Object.keys(propDefinition);
+export function createElementType<T>(
+  BaseElement: typeof HTMLElement,
+  propDefinition: PropsDefinition<T>
+) {
+  const propKeys = Object.keys(propDefinition) as Array<
+    keyof PropsDefinition<T>
+  >;
   return class CustomElement extends BaseElement implements ICustomElement {
     [prop: string]: any;
     __initializing: boolean;
@@ -15,7 +33,9 @@ export function createElementType(BaseElement: typeof HTMLElement, propDefinitio
     __updating: { [prop: string]: any };
     props: { [prop: string]: any };
 
-    static get observedAttributes() { return propKeys.map(k => propDefinition[k].attribute); }
+    static get observedAttributes() {
+      return propKeys.map(k => propDefinition[k].attribute);
+    }
 
     constructor() {
       super();
@@ -30,21 +50,35 @@ export function createElementType(BaseElement: typeof HTMLElement, propDefinitio
 
     connectedCallback() {
       // check that infact it connected since polyfill sometimes double calls
-      if (!connectedToDOM(this) || this.__initializing || this.__initialized) return;
+      if (!connectedToDOM(this) || this.__initializing || this.__initialized)
+        return;
       this.__releaseCallbacks = [];
       this.__propertyChangedCallbacks = [];
       this.__updating = {};
-      this.props = initializeProps(this, propDefinition);
-      const props = propValues(this.props),
-        ComponentType = this.Component as Function | {new(...args: any[]): any},
+      this.props = initializeProps(this as any, propDefinition);
+      const props = propValues<T>(this.props as PropsDefinition<T>),
+        ComponentType = this.Component as
+          | Function
+          | { new (...args: any[]): any },
         outerElement = currentElement;
       try {
         this.__initializing = true;
         currentElement = this;
-        if (isConstructor(ComponentType)) new (ComponentType as ConstructableComponent)(props, {element: this});
-        else (ComponentType as FunctionComponent)(props, {element: this});
+        if (isConstructor(ComponentType))
+          new (ComponentType as ConstructableComponent<T>)(props, {
+            element: this as ICustomElement
+          });
+        else
+          (ComponentType as FunctionComponent<T>)(props, {
+            element: this as ICustomElement
+          });
       } catch (err) {
-        console.error(`Error creating component ${toComponentName(this.nodeName.toLowerCase())}:`, err);
+        console.error(
+          `Error creating component ${toComponentName(
+            this.nodeName.toLowerCase()
+          )}:`,
+          err
+        );
       } finally {
         currentElement = outerElement;
         delete this.__initializing;
@@ -58,7 +92,7 @@ export function createElementType(BaseElement: typeof HTMLElement, propDefinitio
       if (connectedToDOM(this)) return;
       this.__propertyChangedCallbacks.length = 0;
       let callback = null;
-      while(callback = this.__releaseCallbacks.pop()) callback(this);
+      while ((callback = this.__releaseCallbacks.pop())) callback(this);
       delete this.__initialized;
       this.__released = true;
     }
@@ -75,18 +109,22 @@ export function createElementType(BaseElement: typeof HTMLElement, propDefinitio
 
     reloadComponent() {
       let callback = null;
-      while(callback = this.__releaseCallbacks.pop()) callback(this);
+      while ((callback = this.__releaseCallbacks.pop())) callback(this);
       delete this.__initialized;
-      this.renderRoot().textContent = '';
+      this.renderRoot().textContent = "";
       this.connectedCallback();
     }
 
     lookupProp(attrName: string) {
-      if(!propDefinition) return;
-      return propKeys.find(k => attrName === k || attrName === propDefinition[k].attribute);
+      if (!propDefinition) return;
+      return propKeys.find(
+        k => attrName === k || attrName === propDefinition[k].attribute
+      ) as string | undefined;
     }
 
-    renderRoot() { return this.shadowRoot || this.attachShadow({ mode: 'open' }); }
+    renderRoot() {
+      return this.shadowRoot || this.attachShadow({ mode: "open" });
+    }
 
     setProperty(name: string, value: unknown) {
       if (!(name in this.props)) return;
@@ -94,24 +132,42 @@ export function createElementType(BaseElement: typeof HTMLElement, propDefinitio
         oldValue = prop.value;
       this[name] = value;
       if (prop.notify)
-        this.trigger('propertychange', {detail: {value, oldValue, name}})
+        this.trigger("propertychange", { detail: { value, oldValue, name } });
     }
 
     trigger(
-      name:string,
-      {detail, bubbles = true, cancelable = true, composed = true}
-      : {detail?: any, bubbles?: boolean, cancelable?: boolean, composed?: boolean} = {}
+      name: string,
+      {
+        detail,
+        bubbles = true,
+        cancelable = true,
+        composed = true
+      }: {
+        detail?: any;
+        bubbles?: boolean;
+        cancelable?: boolean;
+        composed?: boolean;
+      } = {}
     ) {
-      const event = new CustomEvent(name, {detail, bubbles, cancelable, composed});
+      const event = new CustomEvent(name, {
+        detail,
+        bubbles,
+        cancelable,
+        composed
+      });
       let cancelled = false;
-      if (this['on'+name]) cancelled = this['on'+name](event) === false;
+      if (this["on" + name]) cancelled = this["on" + name](event) === false;
       if (cancelled) event.preventDefault();
       this.dispatchEvent(event);
       return event;
     }
 
-    addReleaseCallback(fn: () => void) { this.__releaseCallbacks.push(fn) }
+    addReleaseCallback(fn: () => void) {
+      this.__releaseCallbacks.push(fn);
+    }
 
-    addPropertyChangedCallback(fn: (name: string, value: any) => void) { this.__propertyChangedCallbacks.push(fn); }
-  }
+    addPropertyChangedCallback(fn: (name: string, value: any) => void) {
+      this.__propertyChangedCallbacks.push(fn);
+    }
+  };
 }
