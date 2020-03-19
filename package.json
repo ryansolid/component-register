@@ -1,7 +1,7 @@
 {
   "name": "component-register",
   "description": "Basic Wrapper around Web Components",
-  "version": "0.6.18",
+  "version": "0.6.19",
   "author": "Ryan Carniato",
   "license": "MIT",
   "readmeFilename": "README.md",
@@ -21,14 +21,14 @@
     "testEnvironment": "@skatejs/ssr/jest"
   },
   "devDependencies": {
-    "@babel/core": "7.7.2",
-    "@babel/preset-typescript": "7.7.2",
+    "@babel/core": "7.8.7",
+    "@babel/preset-typescript": "7.8.3",
     "@skatejs/ssr": "0.19.11",
-    "coveralls": "3.0.6",
-    "jest": "24.9.0",
-    "rollup": "^1.26.3",
-    "rollup-plugin-babel": "4.3.3",
+    "coveralls": "3.0.9",
+    "jest": "25.1.0",
+    "rollup": "^2.1.0",
+    "rollup-plugin-babel": "4.4.0",
     "rollup-plugin-node-resolve": "5.2.0",
-    "typescript": "3.7.2"
+    "typescript": "3.8.3"
   }
 }
