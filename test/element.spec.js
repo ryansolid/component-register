@@ -25,7 +25,7 @@ describe('Creating a Custom Element', () => {
       model: {id: 2},
       list: []
     })((props, { element }) => {
-      const render = props => element.renderRoot().innerHTML = `<h1>Hello ${props.name}</h1>`;
+      const render = props => element.renderRoot.innerHTML = `<h1>Hello ${props.name}</h1>`;
 
       expect(getCurrentElement()).toBe(element);
 

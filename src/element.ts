@@ -11,9 +11,13 @@ import {
   PropsDefinition,
 } from "./utils";
 
-let currentElement: HTMLElement;
+let currentElement: HTMLElement & ICustomElement;
 export function getCurrentElement() {
   return currentElement;
+}
+
+export function noShadowDOM() {
+  currentElement.renderRoot = currentElement;
 }
 
 export function createElementType<T>(
@@ -111,7 +115,7 @@ export function createElementType<T>(
       let callback = null;
       while ((callback = this.__releaseCallbacks.pop())) callback(this);
       delete this.__initialized;
-      this.renderRoot().textContent = "";
+      this.renderRoot.textContent = "";
       this.connectedCallback();
     }
 
@@ -122,7 +126,7 @@ export function createElementType<T>(
       ) as string | undefined;
     }
 
-    renderRoot() {
+    get renderRoot() {
       return this.shadowRoot || this.attachShadow({ mode: "open" });
     }
 

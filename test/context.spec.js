@@ -18,14 +18,14 @@ const Parent = compose(
   register('parent-elem'),
   withProvider(Context)
 )((_, { element }) => {
-  element.renderRoot().innerHTML = '<child-elem></child-elem>';
+  element.renderRoot.innerHTML = '<child-elem></child-elem>';
 });
 
 register('child-elem')((_, { element }) => {
   // tests need defer microtask for some reason
   Promise.resolve().then(() => {
     const c = consume(Context, element);
-    element.renderRoot().innerHTML = `<h1>${c.greeting}</h1>`;
+    element.renderRoot.innerHTML = `<h1>${c.greeting}</h1>`;
   })
 });
 

@@ -14,7 +14,7 @@ export interface ICustomElement {
   props: { [prop: string]: any };
   reloadComponent(): void;
   lookupProp(attrName: string): string | undefined;
-  renderRoot(): Element | Document | ShadowRoot | DocumentFragment;
+  renderRoot: Element | Document | ShadowRoot | DocumentFragment;
   setProperty(name: string, value: unknown): void;
   trigger(
     name: string,

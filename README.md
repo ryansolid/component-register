@@ -35,7 +35,7 @@ The simplest use would be:
 import { register } from 'component-register';
 
 register('my-element')((props, { element }) =>
-  element.renderRoot().innerHTML = 'Hello World'
+  element.renderRoot.innerHTML = 'Hello World'
 )
 ```
 
@@ -47,7 +47,7 @@ You can also define props by giving a name and a default value:
 import { register } from 'component-register';
 
 register('my-greeting', {name: 'World'})((props, { element }) =>
-  element.renderRoot().innerHTML = `Hello ${props.name}`
+  element.renderRoot.innerHTML = `Hello ${props.name}`
 )
 ```
 

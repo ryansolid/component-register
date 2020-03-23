@@ -55,5 +55,5 @@ export {
 } from "./utils";
 export { createMixin, compose } from "./mixin";
 export * from "./context";
-export { getCurrentElement } from "./element";
+export { getCurrentElement, noShadowDOM } from "./element";
 export { hot } from "./hot";
