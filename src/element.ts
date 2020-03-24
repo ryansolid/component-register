@@ -17,7 +17,7 @@ export function getCurrentElement() {
 }
 
 export function noShadowDOM() {
-  currentElement.renderRoot = currentElement;
+  Object.defineProperty(currentElement, "renderRoot", { value: currentElement });
 }
 
 export function createElementType<T>(
