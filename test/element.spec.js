@@ -1,18 +1,11 @@
 const { register, getCurrentElement } = require('../lib/component-register');
-const render = require('@skatejs/ssr');
-
-// Patch isConnected for sake of tests
-let connected;
-Object.defineProperty(HTMLElement.prototype, 'isConnected', {
-  get() { return connected; }
-});
 
 const FIXTURES = [
-  '<test-elem name="John"><shadowroot><h1>Hello John</h1><script>__ssr()</script></shadowroot></test-elem>',
-  '<test-elem name="Jake"><shadowroot><h1>Hello Jake</h1><script>__ssr()</script></shadowroot></test-elem>',
-  '<test-elem name="Matt"><shadowroot><h1>Hello Matt</h1><script>__ssr()</script></shadowroot></test-elem>',
-  '<test-elem><shadowroot><h1>Hello </h1><script>__ssr()</script></shadowroot></test-elem>',
-  '<test-elem name="Nate"><shadowroot><h1>Hello Nate</h1><script>__ssr()</script></shadowroot></test-elem>'
+  '<h1>Hello John</h1>',
+  '<h1>Hello Jake</h1>',
+  '<h1>Hello Matt</h1>',
+  '<h1>Hello </h1>',
+  '<h1>Hello Nate</h1>'
 ]
 
 let TestElem, elem;
@@ -44,49 +37,35 @@ describe('Creating a Custom Element', () => {
     expect(TestElem).toBeDefined();
   });
 
-  it('should upgrade element connected to DOM and cleanup on disconnect', async done => {
-    connected = true;
-    const results = await render(elem = new TestElem());
-    expect(results).toBe(FIXTURES[0]);
-    connected = false;
+  it('should upgrade element connected to DOM', () => {
+    elem = new TestElem();
+    document.body.append(elem);
+    expect(elem.renderRoot.innerHTML).toBe(FIXTURES[0]);
+  });
+
+  it('should update props directly', () => {
+    elem.name = 'Jake';
+    expect(elem.renderRoot.innerHTML).toBe(FIXTURES[1]);
+  });
+
+  it('should update by attribute', () => {
+    elem.setAttribute('name', 'Matt');
+    expect(elem.name).toBe('Matt');
+    expect(elem.renderRoot.innerHTML).toBe(FIXTURES[2]);
+  });
+
+  it('should clear prop', () => {
+    elem.name = '';
+    expect(elem.renderRoot.innerHTML).toBe(FIXTURES[3]);
+  });
+
+  it('should cleanup on disconnect', (done) => {
+    document.body.remove(elem);
     setTimeout(() => {
       expect(elem.__released).toBe(true);
       expect(elem.releasedWasCalled).toBe(true);
-      // set up rest of tests
-      connected = true;
       done();
     }, 0);
-  });
-
-  it('should update props directly', async () => {
-    elem.name = 'Jake';
-    const results = await render(elem);
-    expect(results).toBe(FIXTURES[1]);
-  });
-
-  it('should update by attribute', async () => {
-    elem.setAttribute('name', 'Matt');
-    expect(elem.name).toBe('Matt');
-    const results = await render(elem);
-    expect(results).toBe(FIXTURES[2]);
-  });
-
-  it('should clear prop', async () => {
-    elem.name = '';
-    const results = await render(elem);
-    expect(results).toBe(FIXTURES[3]);
-  });
-
-  it('should be able to setProperty for two-way binding', async () => {
-    elem.setProperty('name', 'Nate');
-    const results = await render(elem);
-    expect(results).toBe(FIXTURES[4]);
-  });
-
-  it('should trigger event', async () => {
-    elem.oncustom = jest.fn();
-    elem.trigger('custom');
-    expect(elem.oncustom).toBeCalled();
   });
 });
 
@@ -98,12 +77,12 @@ describe('Test register exceptions', () => {
   it('should error with no tag', () => {
     expect(() => register()()).toThrow();
   });
-  it('should catch component it error', () => {
+  it('should not catch component if error', () => {
     const ErrElem = register('err-elem')(class {
       constructor() { throw new Error('Trouble'); }
     });
-    expect(async () => {
-      await render(new ErrElem());
-    }).not.toThrow()
+    expect(() => {
+      document.body.append(new ErrElem());
+    }).toThrow()
   })
 });

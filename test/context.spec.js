@@ -1,13 +1,11 @@
 const {compose, register, createContext, withProvider, withConsumer, consume} = require('../lib/component-register');
-const render = require('@skatejs/ssr');
-
-// Patch isConnected for sake of tests
-Object.defineProperty(HTMLElement.prototype, 'isConnected', {
-  get() { return true; }
-});
+const render = (node) => {
+  document.body.append(node);
+  return node.outerHTML;
+}
 
 FIXTURES = [
-  '<parent-elem><shadowroot><child-elem><shadowroot><h1>Hi</h1><script>__ssr()</script></shadowroot></child-elem><script>__ssr()</script></shadowroot></parent-elem>'
+  '<h1>Hi</h1>'
 ]
 
 const Context = createContext(() => {
@@ -22,11 +20,8 @@ const Parent = compose(
 });
 
 register('child-elem')((_, { element }) => {
-  // tests need defer microtask for some reason
-  Promise.resolve().then(() => {
-    const c = consume(Context, element);
-    element.renderRoot.innerHTML = `<h1>${c.greeting}</h1>`;
-  })
+  const c = consume(Context, element);
+  element.renderRoot.innerHTML = `<h1>${c.greeting}</h1>`;
 });
 
 // timing in test env doesn't allow this
@@ -38,16 +33,16 @@ const Child2 = compose(
 });
 
 describe('Test Context API', () => {
-  it('should pass context down', async () => {
+  it('should pass context down', () => {
     let p;
-    const results = await render(p = new Parent());
-    expect(results).toBe(FIXTURES[0]);
+    render(p = new Parent());
+    expect(p.renderRoot.firstChild.renderRoot.innerHTML).toBe(FIXTURES[0]);
   })
 });
 
 // due to limitations of test env
 describe('Fake Test withConsumer', () => {
-  it('should create context key', async () => {
-    await render(new Child2());
+  it('should create context key', () => {
+    render(new Child2());
   });
 })

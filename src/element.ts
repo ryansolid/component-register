@@ -1,14 +1,12 @@
 import {
-  connectedToDOM,
   propValues,
   isConstructor,
-  toComponentName,
   initializeProps,
   parseAttributeValue,
   ICustomElement,
   ConstructableComponent,
   FunctionComponent,
-  PropsDefinition,
+  PropsDefinition
 } from "./utils";
 
 let currentElement: HTMLElement & ICustomElement;
@@ -17,7 +15,9 @@ export function getCurrentElement() {
 }
 
 export function noShadowDOM() {
-  Object.defineProperty(currentElement, "renderRoot", { value: currentElement });
+  Object.defineProperty(currentElement, "renderRoot", {
+    value: currentElement
+  });
 }
 
 export function createElementType<T>(
@@ -29,7 +29,6 @@ export function createElementType<T>(
   >;
   return class CustomElement extends BaseElement implements ICustomElement {
     [prop: string]: any;
-    __initializing: boolean;
     __initialized: boolean;
     __released: boolean;
     __releaseCallbacks: any[];
@@ -43,7 +42,6 @@ export function createElementType<T>(
 
     constructor() {
       super();
-      this.__initializing = false;
       this.__initialized = false;
       this.__released = false;
       this.__releaseCallbacks = [];
@@ -54,8 +52,7 @@ export function createElementType<T>(
 
     connectedCallback() {
       // check that infact it connected since polyfill sometimes double calls
-      if (!connectedToDOM(this) || this.__initializing || this.__initialized)
-        return;
+      if (!this.isConnected || this.__initialized) return;
       this.__releaseCallbacks = [];
       this.__propertyChangedCallbacks = [];
       this.__updating = {};
@@ -66,8 +63,8 @@ export function createElementType<T>(
           | { new (...args: any[]): any },
         outerElement = currentElement;
       try {
-        this.__initializing = true;
         currentElement = this;
+        this.__initialized = true;
         if (isConstructor(ComponentType))
           new (ComponentType as ConstructableComponent<T>)(props, {
             element: this as ICustomElement
@@ -76,24 +73,15 @@ export function createElementType<T>(
           (ComponentType as FunctionComponent<T>)(props, {
             element: this as ICustomElement
           });
-      } catch (err) {
-        console.error(
-          `Error creating component ${toComponentName(
-            this.nodeName.toLowerCase()
-          )}:`,
-          err
-        );
       } finally {
         currentElement = outerElement;
-        delete this.__initializing;
       }
-      this.__initialized = true;
     }
 
     async disconnectedCallback() {
       // prevent premature releasing when element is only temporarely removed from DOM
       await Promise.resolve();
-      if (connectedToDOM(this)) return;
+      if (this.isConnected) return;
       this.__propertyChangedCallbacks.length = 0;
       let callback = null;
       while ((callback = this.__releaseCallbacks.pop())) callback(this);
@@ -111,14 +99,6 @@ export function createElementType<T>(
       }
     }
 
-    reloadComponent() {
-      let callback = null;
-      while ((callback = this.__releaseCallbacks.pop())) callback(this);
-      delete this.__initialized;
-      this.renderRoot.textContent = "";
-      this.connectedCallback();
-    }
-
     lookupProp(attrName: string) {
       if (!propDefinition) return;
       return propKeys.find(
@@ -128,42 +108,6 @@ export function createElementType<T>(
 
     get renderRoot() {
       return this.shadowRoot || this.attachShadow({ mode: "open" });
-    }
-
-    setProperty(name: string, value: unknown) {
-      if (!(name in this.props)) return;
-      const prop = this.props[name],
-        oldValue = prop.value;
-      this[name] = value;
-      if (prop.notify)
-        this.trigger("propertychange", { detail: { value, oldValue, name } });
-    }
-
-    trigger(
-      name: string,
-      {
-        detail,
-        bubbles = true,
-        cancelable = true,
-        composed = true
-      }: {
-        detail?: any;
-        bubbles?: boolean;
-        cancelable?: boolean;
-        composed?: boolean;
-      } = {}
-    ) {
-      const event = new CustomEvent(name, {
-        detail,
-        bubbles,
-        cancelable,
-        composed
-      });
-      let cancelled = false;
-      if (this["on" + name]) cancelled = this["on" + name](event) === false;
-      if (cancelled) event.preventDefault();
-      this.dispatchEvent(event);
-      return event;
     }
 
     addReleaseCallback(fn: () => void) {

@@ -1,10 +1,9 @@
-const render = require('@skatejs/ssr');
 const {register, createMixin, compose} = require('../lib/component-register');
 
-// Patch isConnected for sake of tests
-Object.defineProperty(HTMLElement.prototype, 'isConnected', {
-  get() { return true; }
-});
+const render = (node) => {
+  document.body.append(node);
+  return node.outerHTML;
+}
 
 const FIXTURES = [
   '<mixin-elem toggled="true"></mixin-elem>',
@@ -18,22 +17,22 @@ const toggleMixin = createMixin(options => {
 });
 
 describe('Creating Mixin', () => {
-  it('should apply mixin to fn component', async () => {
+  it('should apply mixin to fn component', () => {
     const MixinElem = compose(
       register('mixin-elem'),
       toggleMixin
     )((_, { toggle }) => toggle());
-    const results = await render(new MixinElem());
+    const results = render(new MixinElem());
     expect(results).toBe(FIXTURES[0]);
   });
-  it('should apply mixin to class component', async () => {
+  it('should apply mixin to class component', () => {
     const ClassElem = compose(
       register('class-elem'),
       toggleMixin
     )(class {
       constructor(_, { toggle }) { toggle(); }
     });
-    const results = await render(new ClassElem());
+    const results = render(new ClassElem());
     expect(results).toBe(FIXTURES[1]);
   });
 });

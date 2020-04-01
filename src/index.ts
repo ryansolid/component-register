@@ -44,14 +44,12 @@ export function register<T>(
 }
 
 export {
-  nativeShadowDOM,
   isConstructor,
   isObject,
   isFunction,
-  toComponentName,
   toAttribute,
   toProperty,
-  connectedToDOM
+  reloadElement
 } from "./utils";
 export { createMixin, compose } from "./mixin";
 export * from "./context";

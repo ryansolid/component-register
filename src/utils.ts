@@ -5,26 +5,14 @@ interface PropDefinition<T> {
 }
 export interface ICustomElement {
   [prop: string]: any;
-  __initializing: boolean;
   __initialized: boolean;
   __released: boolean;
   __releaseCallbacks: any[];
   __propertyChangedCallbacks: any[];
   __updating: { [prop: string]: any };
   props: { [prop: string]: any };
-  reloadComponent(): void;
   lookupProp(attrName: string): string | undefined;
   renderRoot: Element | Document | ShadowRoot | DocumentFragment;
-  setProperty(name: string, value: unknown): void;
-  trigger(
-    name: string,
-    options: {
-      detail?: any;
-      bubbles?: boolean;
-      cancelable?: boolean;
-      composed?: boolean;
-    }
-  ): CustomEvent;
   addReleaseCallback(fn: () => void): void;
   addPropertyChangedCallback(fn: (name: string, value: any) => void): void;
 }
@@ -46,8 +34,6 @@ export type PropsDefinition<T> = {
 };
 export type ComponentType<T> = FunctionComponent<T> | ConstructableComponent<T>;
 
-const testElem = document.createElement("div");
-
 function cloneProps<T>(props: PropsDefinition<T>) {
   const propKeys = Object.keys(props) as Array<keyof PropsDefinition<T>>;
   return propKeys.reduce((memo, k) => {
@@ -65,8 +51,6 @@ function cloneProps<T>(props: PropsDefinition<T>) {
   }, {} as PropsDefinition<T>);
 }
 
-export const nativeShadowDOM = !!testElem.attachShadow;
-
 export function normalizePropDefs<T>(
   props: PropsDefinitionInput<T>
 ): PropsDefinition<T> {
@@ -77,7 +61,6 @@ export function normalizePropDefs<T>(
     memo[k] = !(isObject(v) && "value" in v)
       ? (({ value: v } as unknown) as PropDefinition<T[keyof T]>)
       : (v as PropDefinition<T[keyof T]>);
-    memo[k].notify != null || (memo[k].notify = false);
     memo[k].attribute || (memo[k].attribute = toAttribute(k as string));
     return memo;
   }, {} as PropsDefinition<T>);
@@ -174,12 +157,6 @@ export function toProperty(attr: string) {
     .replace(/(-)([a-z])/g, test => test.toUpperCase().replace("-", ""));
 }
 
-export function toComponentName(tag: string) {
-  return tag
-    .toLowerCase()
-    .replace(/(^|-)([a-z])/g, test => test.toUpperCase().replace("-", ""));
-}
-
 export function isObject(obj: any) {
   return obj != null && (typeof obj === "object" || typeof obj === "function");
 }
@@ -192,13 +169,10 @@ export function isConstructor(f: Function) {
   return typeof f === "function" && f.toString().indexOf("class") === 0;
 }
 
-export function connectedToDOM(node: Node) {
-  if ("isConnected" in node) return node.isConnected;
-  const doc = (node as Node).ownerDocument;
-  if (!doc) return false;
-  if (doc.body.contains(node)) return true;
-  while (node && node !== doc.documentElement) {
-    node = node.parentNode || (node as ShadowRoot).host;
-  }
-  return node === doc.documentElement;
+export function reloadElement(node: ICustomElement) {
+  let callback = null;
+  while ((callback = node.__releaseCallbacks.pop())) callback(node);
+  delete node.__initialized;
+  node.renderRoot.textContent = "";
+  node.connectedCallback();
 }

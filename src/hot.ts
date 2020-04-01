@@ -1,4 +1,4 @@
-type ReloadableComponent = HTMLElement & { reloadComponent: () => void };
+import { reloadElement, ICustomElement } from "./utils";
 
 function walk(root: Node, call: (node: Node) => void) {
   call(root);
@@ -19,7 +19,7 @@ export function hot(module: NodeModule & { hot?: any }, tagName: string) {
       }
 
       walk(document.body, (node: Node) =>
-        (node as HTMLElement).localName === tagName && setTimeout(() => (node as ReloadableComponent).reloadComponent(), 0)
+        (node as HTMLElement).localName === tagName && setTimeout(() => reloadElement(node as unknown as ICustomElement), 0)
       );
     }
 
