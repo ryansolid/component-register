@@ -5,7 +5,7 @@ interface PropDefinition<T> {
 }
 export interface ICustomElement {
   [prop: string]: any;
-  __initialized: boolean;
+  __initialized?: boolean;
   __released: boolean;
   __releaseCallbacks: any[];
   __propertyChangedCallbacks: any[];

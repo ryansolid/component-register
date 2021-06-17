@@ -29,7 +29,7 @@ export function createElementType<T>(
   >;
   return class CustomElement extends BaseElement implements ICustomElement {
     [prop: string]: any;
-    __initialized: boolean;
+    __initialized?: boolean;
     __released: boolean;
     __releaseCallbacks: any[];
     __propertyChangedCallbacks: any[];

@@ -1,5 +1,5 @@
 import nodeResolve from '@rollup/plugin-node-resolve';
-import babel from 'rollup-plugin-babel';
+import babel from '@rollup/plugin-babel';
 
 export default {
   input: 'src/index.ts',
@@ -16,6 +16,7 @@ export default {
     babel({
       extensions: ['.js', '.ts'],
       presets: ["@babel/preset-typescript"],
+      babelHelpers: "bundled",
       exclude: 'node_modules/**'
     })
   ]
