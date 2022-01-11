@@ -6,7 +6,7 @@ import {
   ICustomElement,
   ConstructableComponent,
   FunctionComponent,
-  PropsDefinition
+  PropsDefinition,
 } from "./utils";
 
 let currentElement: HTMLElement & ICustomElement;
@@ -16,7 +16,7 @@ export function getCurrentElement() {
 
 export function noShadowDOM() {
   Object.defineProperty(currentElement, "renderRoot", {
-    value: currentElement
+    value: currentElement,
   });
 }
 
@@ -37,7 +37,7 @@ export function createElementType<T>(
     props: { [prop: string]: any };
 
     static get observedAttributes() {
-      return propKeys.map(k => propDefinition[k].attribute);
+      return propKeys.map((k) => propDefinition[k].attribute);
     }
 
     constructor() {
@@ -51,8 +51,7 @@ export function createElementType<T>(
     }
 
     connectedCallback() {
-      // check that infact it connected since polyfill sometimes double calls
-      if (!this.isConnected || this.__initialized) return;
+      if (this.__initialized) return;
       this.__releaseCallbacks = [];
       this.__propertyChangedCallbacks = [];
       this.__updating = {};
@@ -67,11 +66,11 @@ export function createElementType<T>(
         this.__initialized = true;
         if (isConstructor(ComponentType))
           new (ComponentType as ConstructableComponent<T>)(props, {
-            element: this as ICustomElement
+            element: this as ICustomElement,
           });
         else
           (ComponentType as FunctionComponent<T>)(props, {
-            element: this as ICustomElement
+            element: this as ICustomElement,
           });
       } finally {
         currentElement = outerElement;
@@ -92,17 +91,19 @@ export function createElementType<T>(
     attributeChangedCallback(name: string, oldVal: string, newVal: string) {
       if (!this.__initialized) return;
       if (this.__updating[name]) return;
-      name = this.lookupProp(name) as string;
+      name = this.lookupProp(name)!;
       if (name in propDefinition) {
         if (newVal == null && !this[name]) return;
-        this[name] = parseAttributeValue(newVal);
+        this[name] = propDefinition[name as keyof T].parse
+          ? parseAttributeValue(newVal)
+          : newVal;
       }
     }
 
     lookupProp(attrName: string) {
       if (!propDefinition) return;
       return propKeys.find(
-        k => attrName === k || attrName === propDefinition[k].attribute
+        (k) => attrName === k || attrName === propDefinition[k].attribute
       ) as string | undefined;
     }
 
