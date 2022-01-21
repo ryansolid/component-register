@@ -64,7 +64,7 @@ export function normalizePropDefs<T>(
       ? (({ value: v } as unknown) as PropDefinition<T[keyof T]>)
       : (v as PropDefinition<T[keyof T]>);
     memo[k].attribute || (memo[k].attribute = toAttribute(k as string));
-    memo[k].parse = typeof memo[k].value !== "string";
+    memo[k].parse = "parse" in memo[k] ? memo[k].parse : typeof memo[k].value !== "string";
     return memo;
   }, {} as PropsDefinition<T>);
 }
@@ -87,7 +87,7 @@ export function initializeProps<T>(
     const prop = props[key],
       attr = element.getAttribute(prop.attribute),
       value = element[key];
-    if (attr && prop.parse) prop.value = parseAttributeValue(attr);
+    if (attr) prop.value = prop.parse ? parseAttributeValue(attr): attr;
     if (value != null)
       prop.value = Array.isArray(value) ? value.slice(0) : value;
     prop.reflect && reflect(element, prop.attribute, prop.value);
