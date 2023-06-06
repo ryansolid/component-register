@@ -90,7 +90,7 @@ export function initializeProps<T>(
     if (attr) prop.value = prop.parse ? parseAttributeValue(attr): attr;
     if (value != null)
       prop.value = Array.isArray(value) ? value.slice(0) : value;
-    prop.reflect && reflect(element, prop.attribute, prop.value);
+    prop.reflect && reflect(element, prop.attribute, prop.value, prop.parse);
     Object.defineProperty(element, key, {
       get() {
         return prop.value;
@@ -98,7 +98,7 @@ export function initializeProps<T>(
       set(val) {
         const oldValue = prop.value;
         prop.value = val;
-        prop.reflect && reflect(this, prop.attribute, prop.value);
+        prop.reflect && reflect(this, prop.attribute, prop.value, prop.parse);
         for (
           let i = 0, l = this.__propertyChangedCallbacks.length;
           i < l;
@@ -126,10 +126,11 @@ export function parseAttributeValue(value: string) {
 export function reflect<T>(
   node: UpdateableElement<T>,
   attribute: string,
-  value: any
+  value: any,
+  parse: boolean
 ) {
   if (value == null || value === false) return node.removeAttribute(attribute);
-  let reflect = JSON.stringify(value);
+  let reflect = parse ? JSON.stringify(value): value;
   node.__updating[attribute] = true;
   if (reflect === "true") reflect = "";
   node.setAttribute(attribute, reflect);
