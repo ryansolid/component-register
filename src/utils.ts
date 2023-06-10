@@ -1,4 +1,4 @@
-interface PropDefinition<T> {
+export interface PropDefinition<T> {
   value: T;
   attribute: string;
   notify: boolean;

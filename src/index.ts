@@ -6,7 +6,8 @@ import {
   FunctionComponent as uFunctionComponent,
   ComponentOptions as uComponentOptions,
   ICustomElement as uICustomElement,
-  PropsDefinitionInput as uPropsDefinitionInput
+  PropsDefinitionInput as uPropsDefinitionInput,
+  PropDefinition as uPropDefinition
 } from "./utils";
 
 export type ComponentOptions = uComponentOptions;
@@ -19,6 +20,7 @@ export type RegisterOptions = {
   BaseElement?: typeof HTMLElement;
   extension?: { extends: string };
 };
+export type PropDefinition<T> = uPropDefinition<T>;
 
 export function register<T>(
   tag: string,
