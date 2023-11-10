@@ -60,7 +60,7 @@ export function normalizePropDefs<T>(
   const propKeys = Object.keys(props) as Array<keyof PropsDefinition<T>>;
   return propKeys.reduce((memo, k) => {
     const v = props[k];
-    memo[k] = !(isObject(v) && "value" in v)
+    memo[k] = !(isObject(v) && "value" in (v as object))
       ? (({ value: v } as unknown) as PropDefinition<T[keyof T]>)
       : (v as PropDefinition<T[keyof T]>);
     memo[k].attribute || (memo[k].attribute = toAttribute(k as string));
