@@ -1,7 +1,7 @@
 {
   "name": "component-register",
   "description": "Basic Wrapper around Web Components",
-  "version": "0.8.3",
+  "version": "0.8.4",
   "author": "Ryan Carniato",
   "license": "MIT",
   "readmeFilename": "README.md",
@@ -30,6 +30,6 @@
     "jest": "^26.0.0",
     "jest-environment-jsdom-sixteen": "^2.0.0",
     "rollup": "^2.52.0",
-    "typescript": "4.3.3"
+    "typescript": "^5.2.2"
   }
 }
