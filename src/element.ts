@@ -47,7 +47,7 @@ export function createElementType<T>(
       this.__releaseCallbacks = [];
       this.__propertyChangedCallbacks = [];
       this.__updating = {};
-      this.props = {};
+      this.props = initializeProps(this as any, propDefinition);
     }
 
     connectedCallback() {
@@ -55,7 +55,6 @@ export function createElementType<T>(
       this.__releaseCallbacks = [];
       this.__propertyChangedCallbacks = [];
       this.__updating = {};
-      this.props = initializeProps(this as any, propDefinition);
       const props = propValues<T>(this.props as PropsDefinition<T>),
         ComponentType = this.Component as
           | Function
@@ -89,7 +88,6 @@ export function createElementType<T>(
     }
 
     attributeChangedCallback(name: string, oldVal: string, newVal: string) {
-      if (!this.__initialized) return;
       if (this.__updating[name]) return;
       name = this.lookupProp(name)!;
       if (name in propDefinition) {

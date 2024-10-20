@@ -85,13 +85,7 @@ export function initializeProps<T>(
   const props = cloneProps(propDefinition),
     propKeys = Object.keys(propDefinition) as Array<keyof PropsDefinition<T>>;
   propKeys.forEach((key) => {
-    const prop = props[key],
-      attr = element.getAttribute(prop.attribute),
-      value = element[key];
-    if (attr) prop.value = prop.parse ? parseAttributeValue(attr) : attr;
-    if (value != null)
-      prop.value = Array.isArray(value) ? value.slice(0) : value;
-    prop.reflect && reflect(element, prop.attribute, prop.value, !!prop.parse);
+    const prop = props[key]
     Object.defineProperty(element, key, {
       get() {
         return prop.value;
