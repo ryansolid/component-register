@@ -38,8 +38,12 @@ describe('Creating a Custom Element', () => {
     expect(TestElem).toBeDefined();
   });
 
-  it('should upgrade element connected to DOM', () => {
+  it('should initialized props in new element', () => {
     elem = new TestElem();
+    expect('name' in elem).toBe(true)
+  });
+
+  it('should upgrade element connected to DOM', () => {
     document.body.append(elem);
     expect(elem.renderRoot.innerHTML).toBe(FIXTURES[0]);
   });
