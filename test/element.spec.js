@@ -69,6 +69,15 @@ describe('Creating a Custom Element', () => {
       done();
     }, 0);
   });
+
+  it('should have properties defined for React 19 to pick up', () => {
+    const tempElem = new TestElem();
+    expect(tempElem).toHaveProperty('name');
+    expect(tempElem).toHaveProperty('number');
+    expect(tempElem).toHaveProperty('callbackFn');
+    expect(tempElem).toHaveProperty('model');
+    expect(tempElem).toHaveProperty('list');
+  })
 });
 
 describe('Test register exceptions', () => {
