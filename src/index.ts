@@ -20,6 +20,7 @@ export type RegisterOptions = {
   BaseElement?: typeof HTMLElement;
   extension?: { extends: string };
   customElements?: CustomElementRegistry;
+  nestedCustomElements?: CustomElementRegistry;
 };
 export type PropDefinition<T> = uPropDefinition<T>;
 
@@ -31,7 +32,8 @@ export function register<T>(
   const {
     BaseElement = HTMLElement,
     extension,
-    customElements = window.customElements
+    customElements = window.customElements,
+    nestedCustomElements = customElements,
   } = options;
   return (ComponentType: ComponentType<T>) => {
     if (!tag) throw new Error("tag is required to register a Component");
@@ -42,7 +44,7 @@ export function register<T>(
       return ElementType;
     }
 
-    ElementType = createElementType(BaseElement, normalizePropDefs(props));
+    ElementType = createElementType(BaseElement, normalizePropDefs(props),{nestedCustomElements});
     ElementType.prototype.Component = ComponentType;
     ElementType.prototype.registeredTag = tag;
     customElements.define(tag, ElementType, extension);

@@ -22,7 +22,8 @@ export function noShadowDOM() {
 
 export function createElementType<T>(
   BaseElement: typeof HTMLElement,
-  propDefinition: PropsDefinition<T>
+  propDefinition: PropsDefinition<T>,
+  { nestedCustomElements = window.customElements }: { nestedCustomElements?: CustomElementRegistry; }
 ) {
   const propKeys = Object.keys(propDefinition) as Array<
     keyof PropsDefinition<T>
@@ -62,7 +63,7 @@ export function createElementType<T>(
       const props = propValues<T>(this.props as PropsDefinition<T>),
         ComponentType = this.Component as
           | Function
-          | { new (...args: any[]): any },
+          | { new(...args: any[]): any },
         outerElement = currentElement;
       try {
         currentElement = this;
@@ -111,7 +112,13 @@ export function createElementType<T>(
     }
 
     get renderRoot() {
-      return this.shadowRoot || this.attachShadow({ mode: "open" });
+      return this.shadowRoot || (() => {
+        try {
+          return this.attachShadow({ mode: 'open', registry: nestedCustomElements } as any)
+        } catch (err) {
+          return this.attachShadow({ mode: 'open' })
+        }
+      })();
     }
 
     addReleaseCallback(fn: () => void) {
