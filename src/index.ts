@@ -54,8 +54,6 @@ export {
   isConstructor,
   isObject,
   isFunction,
-  toAttribute,
-  toProperty,
   reloadElement
 } from "./utils";
 export { createMixin, compose } from "./mixin";

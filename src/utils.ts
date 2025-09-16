@@ -63,7 +63,7 @@ export function normalizePropDefs<T>(
     memo[k] = !(isObject(v) && "value" in (v as object))
       ? ({ value: v } as unknown as PropDefinition<T[keyof T]>)
       : (v as PropDefinition<T[keyof T]>);
-    memo[k].attribute || (memo[k].attribute = toAttribute(k as string));
+    memo[k].attribute || (memo[k].attribute = (k as string));
     memo[k].parse =
       "parse" in memo[k] ? memo[k].parse : typeof memo[k].value !== "string";
     return memo;
@@ -136,19 +136,6 @@ export function reflect<T>(
   if (reflect === "true") reflect = "";
   node.setAttribute(attribute, reflect);
   Promise.resolve().then(() => delete node.__updating[attribute]);
-}
-
-export function toAttribute(propName: string) {
-  return propName
-    .replace(/\.?([A-Z]+)/g, (x, y) => "-" + y.toLowerCase())
-    .replace("_", "-")
-    .replace(/^-/, "");
-}
-
-export function toProperty(attr: string) {
-  return attr
-    .toLowerCase()
-    .replace(/(-)([a-z])/g, (test) => test.toUpperCase().replace("-", ""));
 }
 
 export function isObject(obj: any) {
