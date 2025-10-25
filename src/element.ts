@@ -49,7 +49,9 @@ export function createElementType<T>(
       this.__updating = {};
       this.props = {};
       for (let propKey of propKeys) {
-        this[propKey as never] = undefined
+        // fix: Attempted to assign to readonly property.
+        if (propKey in this) continue;
+        this[propKey as never] = undefined;
       }
     }
 
