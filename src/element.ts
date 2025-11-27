@@ -48,13 +48,18 @@ export function createElementType<T>(
       this.__propertyChangedCallbacks = [];
       this.__updating = {};
       this.props = {};
-      for (let propKey of propKeys) {
-        this[propKey as never] = undefined
-      }
     }
 
     connectedCallback() {
       if (this.__initialized) return;
+
+      // Initialize all props.
+      for (let propKey of propKeys) {
+        if (!(propKey in this)) {
+          this[propKey as never] = undefined;
+        }
+      }
+
       this.__releaseCallbacks = [];
       this.__propertyChangedCallbacks = [];
       this.__updating = {};
